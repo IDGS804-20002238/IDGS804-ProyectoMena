@@ -1,0 +1,79 @@
+{% extends "layout.html" %}
+{% block content %}
+<section id="hero">
+  <div id="heroCarousel" data-bs-interval="5000" class="carousel slide carousel-fade" data-bs-ride="carousel">
+    <ol class="carousel-indicators" id="hero-carousel-indicators"></ol>
+    <div class="carousel-inner" role="listbox">
+      <div class="carousel-item active" style="background-image: url(static/img/slide/slide-1.jpg)">
+        <div class="carousel-container">
+          <div class="container">
+            <h2 class="animate__animated animate__fadeInDown">Bienvenido a <span>MEXATECH</span></h2>
+            <p class="animate__animated animate__fadeInUp">Bienvenido a nuestra tienda de videojuegos y consolas, donde podrás encontrar todo lo que necesitas para satisfacer tu pasión por los juegos. 
+            </p>
+            <a href="#about" class="btn-get-started animate__animated animate__fadeInUp scrollto">Leer más</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<main id="main">
+  <section id="about" class="about">
+    <div class="container">
+
+      <div class="row content">
+        <div class="col-lg-6">
+          <h2>MEXATECH</h2>
+        </div>
+        <div class="col-lg-6 pt-4 pt-lg-0">
+          <p>
+            Ofrecemos una amplia variedad de videojuegos para todas las plataformas, desde las consolas más populares como PlayStation, Xbox y Nintendo, hasta los juegos para PC.
+            <span>Y con envio gratis a toda la Republica Mexicana</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section id="services" class="services">
+    <div class="container">
+      <h3>Nosotros</h3>
+      <div class="row">
+        <div class="col-md-12 mt-4 mt-md-0">
+          <div class="icon-box">
+            <i class="bi bi-hdd-fill"></i>
+            <h4><a href="#">Objetivo general</a></h4>
+            <p>Ser la tienda de videojuegos y consolas líder en nuestra región, ofreciendo la mejor selección de juegos, consolas y accesorios, así como un servicio excepcional al cliente.</p>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="icon-box">
+            <i class="bi bi-briefcase"></i>
+            <h4><a href="#">Mison</a></h4>
+            <p>En nuestra tienda, nos dedicamos a ofrecer la mejor experiencia de compra para los amantes de los videojuegos. Nos aseguramos de tener siempre las últimas novedades en videojuegos y consolas, así como un equipo de expertos dispuesto a ayudar a nuestros clientes a encontrar el producto perfecto para ellos.</p>
+          </div>
+        </div>
+        <div class="col-md-6 mt-4 mt-md-0">
+          <div class="icon-box">
+            <i class="bi bi-card-checklist"></i>
+            <h4><a href="#">Vision</a></h4>
+            <p>Queremos ser reconocidos como la tienda de videojuegos y consolas más confiable y reconocida en nuestra región, ofreciendo una experiencia única de compra que supere las expectativas de nuestros clientes.</p>
+          </div>
+        </div>
+        <div class="col-md-12 mt-4 mt-md-0">
+          <div class="icon-box">
+            <i class="bi bi-motherboard-fill"></i>
+            <h4><a href="#">Valores</a></h4>
+            <p>
+              - Pasión por los videojuegos: Somos apasionados por los videojuegos y nuestra pasión nos impulsa a ofrecer la mejor selección y servicio al cliente.<br>
+              - Honestidad y transparencia: Nos comprometemos a ser honestos y transparentes en todas nuestras transacciones y comunicaciones con nuestros clientes y proveedores.<br>
+              - Excelencia en el servicio al cliente: Nos esforzamos por ofrecer un servicio al cliente excepcional, desde la selección del producto hasta la postventa.<br>
+              - Innovación: Nos mantenemos a la vanguardia de las últimas tendencias en videojuegos y tecnología para ofrecer la mejor selección de productos y servicios.<br>
+              - Responsabilidad social: Nos preocupamos por el bienestar de nuestra comunidad y nos comprometemos a hacer nuestra parte para ayudar a aquellos que nos rodean.<br>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+{% endblock %}
