@@ -1,4 +1,4 @@
-{% extends "layout2.html" %}
+{% extends "layout.html" %}
 
 {% block content %}
 <main id="main">
@@ -12,13 +12,20 @@
     
             </div>
         </section><!-- End Breadcrumbs -->
-    
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="alert alert-warning" role="alert">
+            {{ messages[0] }}.
+        </div>
+        {% endif %}
+        {% endwith %}
     <!-- ======= Contact Section ======= -->
     <section id="contact" class="contact">
         <div class="container">
             <a href="{{ url_for('productos.addProducto') }}">
                 <button type="button" class="btn btn-success">Agregar Productos</button>
             </a>
+            <h1>Productos Activos</h1>
             <table class="table mt-5">
                 <thead>
                     <tr>
@@ -30,18 +37,48 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {%for producto in productos%}
+                    {%for producto in productos1%}
                     <tr>
                         <td>{{producto.idProducto}}</td>
                         <td>{{producto.nombre}}</td>
-                        <td>{{producto.precio}}</td>
+                        <td>${{producto.precio}}</td>
                         <td><img src="../static/img/productos/{{producto.image_name}}" width="10" height="100" class="card-img-top" alt="..."></td>
                         <td>
                             <a href="{{url_for('productos.updateProducto', id=producto.idProducto)}}">
                                 <button type="button" class="btn btn-warning">Actualizar</button>
                             </a>
                             <a href="{{url_for('productos.deleteProducto', id=producto.idProducto)}}">
-                                <button type="button" class="btn btn-danger">Eliminar</button>
+                                <button type="button" class="btn btn-danger" value="producto.idProducto">Desactivar</button>
+                            </a>
+                        </td>
+                    </tr>
+                    {%endfor%}
+                </tbody>
+            </table>
+            <h1>Productos Inactivos</h1>
+            <table class="table mt-5">
+                <thead>
+                    <tr>
+                        <th scope="col">idProducto</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Precio</th>
+                        <th scope="col">Imagen</th>
+                        <th scope="col">Opciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {%for producto in productos2%}
+                    <tr>
+                        <td>{{producto.idProducto}}</td>
+                        <td>{{producto.nombre}}</td>
+                        <td>${{producto.precio}}</td>
+                        <td><img src="../static/img/productos/{{producto.image_name}}" width="10" height="100" class="card-img-top" alt="..."></td>
+                        <td>
+                            <a href="{{url_for('productos.updateProducto', id=producto.idProducto)}}">
+                                <button type="button" class="btn btn-warning">Actualizar</button>
+                            </a>
+                            <a href="{{url_for('productos.activeProducto', id=producto.idProducto)}}">
+                                <button type="button" class="btn btn-danger" value="producto.idProducto">Activar</button>
                             </a>
                         </td>
                     </tr>

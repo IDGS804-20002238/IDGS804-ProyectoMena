@@ -29,10 +29,10 @@ class User(db.Model, UserMixin):
                             backref=db.backref('users', lazy='dynamic'))
     
 class Productos(db.Model, UserMixin):
-    
     __tablename__ = 'productos'
     idProducto = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(255), nullable=False)
     precio = db.Column(db.String(255), unique=False)
     image_name = db.Column(db.String(255), unique=False)
-    
+    estatus = db.Column(db.Integer, default=1)  # Agregar la columna "estatus" con valor por defecto 1
+
