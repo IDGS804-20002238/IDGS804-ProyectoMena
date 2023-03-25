@@ -1,4 +1,5 @@
 from flask import Flask
+import pyodbc
 from flask_security import Security, SQLAlchemyUserDatastore
 from flask_sqlalchemy import SQLAlchemy
 import os
@@ -14,7 +15,7 @@ def create_app():
 
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SECRET_KEY'] = os.urandom(24)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://angel:root@127.0.0.1/mena'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mssql+pyodbc://DESKTOP-3J361UA/mena?driver=ODBC+Driver+17+for+SQL+Server'
     app.config['SECURITY_PASSWORD_HASH'] = 'pbkdf2_sha512'
     app.config['SECURITY_PASSWORD_SALT'] = 'thisissecretsalt'
 

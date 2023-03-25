@@ -1789,3 +1789,34 @@ section {
 #footer .credits a:hover {
   color: white;
 }
+
+.product-card {
+  border: 1px solid black;
+  max-width: 250px;
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.product-card img {
+  max-height: 200px;
+  object-fit: contain;
+  margin: auto;
+}
+
+.product-card .card-body {
+  text-align: center;
+}
+
+.row-no-gutters {
+  margin-right: 0;
+  margin-left: 0;
+}
+
+.row-no-gutters [class^="col-"],
+.row-no-gutters [class*=" col-"] {
+  padding-right: 0;
+  padding-left: 0;
+}

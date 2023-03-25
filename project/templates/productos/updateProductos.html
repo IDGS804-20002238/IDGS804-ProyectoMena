@@ -28,25 +28,32 @@
                 <div class="row">
                     <div class="col-md-6 form-group">
                         <label for="nombre">Nombre</label>
-                        <input type="text" name="nombre" class="form-control" id="text1" placeholder="Nombre" value="{{producto.nombre}}" required>
+                        <input type="text" name="nombre"  class="form-control" id="text1" placeholder="Nombre" value="{{producto.nombre}}" required>
                     </div>
                     <div class="col-md-6 form-group mt-3 mt-md-0">
                         <label for="precio">Precio</label>
                         <input type="text" name="precio" class="form-control" id="text2" placeholder="Precio" value="{{producto.precio}}" required>
                     </div>
                     <div class="col-md-6 form-group mt-3 mt-md-0">
-                        <label for="precio">Imagen</label>
+                        <label for="tipo_producto">Tipo de Producto</label>
+                        <select class="selectpicker form-control" id="tipo_producto" name="tipo_producto" data-live-search="true" required>
+                            {% for tipo in tipos %}
+                                <option value="{{ tipo.tipoProductoID }}">{{ tipo.nombreProducto }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6 form-group mt-3 mt-md-0">
+                        <label for="precio">Imagen del Producto:</label>
                         <img src="../../static/img/productos/{{producto.image_name}}" alt="{{producto.image_name}}" width="150" height="100">
+                        <input type="file" id="file" name="file" accept="image/png, image/jpeg">
                     </div>
                 </div>
-                <div class="col-md-6 form-group mt-3 mt-md-0">
-                    <label for="file">Imagen de cabecera:</label>
-                    <input type="file" id="file" name="file" accept="image/png, image/jpeg">
-                  </div>
-                <div class="text-center"><input class="btn btn-primary" type="submit" value="Actulizar"></div>
+                <div class="text-center"><input class="btn btn-primary btn-lg btn-block" type="submit" value="Actulizar"></div>
             </form>
         </div>
-    </section><!-- End Contact Section -->
+    </section>
+    
+    <!-- End Contact Section -->
 
 </main><!-- End #main -->
 {% endblock %}

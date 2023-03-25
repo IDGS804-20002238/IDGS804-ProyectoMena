@@ -24,11 +24,11 @@
     <!-- ======= Contact Section ======= -->
     <section id="contact" class="contact">
         <div class="container">
-            <div class="row row-cols-1 row-cols-md-3 g-4">
-                {%for producto in productos%}
+            <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 row-no-gutters">
+                {% for producto in productos %}
                 <div class="col">
-                    <div class="card h-100">
-                        <img src="../static/img/productos/{{producto.image_name}}" class="card-img-top" alt="...">
+                    <div class="product-card">
+                        <img src="../static/img/productos/{{producto.image_name}}" class="card-img-top" alt="..." style="max-height: 200px; object-fit: contain; margin: auto;">
                         <div class="card-body">
                             <h5 class="card-title">{{producto.nombre}}</h5>
                             <p class="card-text">{{producto.precio}}</p>
@@ -36,10 +36,12 @@
                         <a href="#" class="btn btn-primary stretched-link">Agregar al carrito</a>
                     </div>
                 </div>
-                {%endfor%}
+                {% endfor %}
             </div>
         </div>
-    </section><!-- End Contact Section -->
+    </section>
+    
+      
 
 </main><!-- End #main -->
 {% endblock %}
