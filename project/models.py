@@ -62,3 +62,10 @@ class User(db.Model, UserMixin):
     roles = db.relationship('Role', secondary=roles_users,
                             backref=db.backref('users', lazy='dynamic'))
 
+class MateriaPrima(db.Model):
+    __tablename__ = 'materiaPrima'
+    materiaPrimaId = db.Column(db.Integer(), primary_key=True)
+    image_name = db.Column(db.String(255))
+    nombreMateriaPrima = db.Column(db.String(255), unique=True)
+    metrosMateriaPrima = db.Column(db.Integer(), unique=False)
+

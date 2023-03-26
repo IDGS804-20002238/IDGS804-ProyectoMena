@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<main id="main">
+
+    <!-- ======= Breadcrumbs ======= -->
+    <section id="breadcrumbs" class="breadcrumbs">
+        <div class="container">
+
+            <div class="d-flex justify-content-between align-items-center">
+                <h2>Materia Prima</h2>
+            </div>
+
+        </div>
+    </section><!-- End Breadcrumbs -->
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="alert alert-warning" role="alert">
+        {{ messages[0] }}. Go to <a href="{{ url_for('auth.login') }}">Pagina de login</a>.
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <!-- ======= Contact Section ======= -->
+    <section >
+        <div class="container">
+            <table class="table mt-5">
+                <thead>
+                    <tr>
+                        <th scope="col">idProducto</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Metros del Producto</th>
+                        <th scope="col">Imagen</th>
+                        <th scope="col">Opciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {%for materiaPrima in materiaPrima%}
+                    <tr>
+                        <td>{{materiaPrima.materiaPrimaId}}</td>
+                        <td>{{materiaPrima.nombreMateriaPrima}}</td>
+                        <td>{{materiaPrima.metrosMateriaPrima}}</td>
+                        <td><img src="../static/img/MateriaPrima/{{materiaPrima.image_name}}" width="10" height="100" class="card-img-top" alt="..."></td>
+                        <td>
+                             
+                                <button type="button" class="btn btn-warning">Actualizar</button>
+                             
+                             
+                                <button type="button" class="btn btn-danger" value="producto.idProducto">Desactivar</button>
+                             
+                        </td>
+                    </tr>
+                    {%endfor%}
+                </tbody>
+            </table>
+        </div>
+    </section>
+    
+      
+
+</main><!-- End #main -->
+{% endblock %}
