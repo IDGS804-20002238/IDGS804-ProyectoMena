@@ -49,5 +49,8 @@ def create_app():
     from .routes.materiaPrima import materiaPrima as main_blueprint
     app.register_blueprint(main_blueprint)
 
+    from .routes.pedidos import pedidos as main_blueprint
+    app.register_blueprint(main_blueprint)
+
 
     return app

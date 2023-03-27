@@ -1,5 +1,5 @@
 import logging
-from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app, jsonify
+from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app, jsonify,Flask
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_security import login_required, current_user, roles_required
 from flask_security.utils import login_user, logout_user, hash_password, encrypt_password
@@ -18,3 +18,4 @@ def galeriaMateriaPrima():
     materiaPrima = MateriaPrima.query.all()
     # logger.info('Galeria de productos vista por el usuario: %s', current_user.name)
     return render_template('/Materia_Prima/materia_prima.html', materiaPrima=materiaPrima)
+

@@ -69,3 +69,33 @@ class MateriaPrima(db.Model):
     nombreMateriaPrima = db.Column(db.String(255), unique=True)
     metrosMateriaPrima = db.Column(db.Integer(), unique=False)
 
+class Compra(db.Model):
+    __tablename__ = 'compras'
+    idCompra = db.Column(db.Integer(), primary_key=True)
+    fechaCompra = db.Column(db.DateTime(), nullable=False)
+    id = db.Column(db.Integer(), nullable=False)
+    subtotal = db.Column(db.Integer())
+    estatus = db.Column(db.Integer(), default=1)
+    detalle_compra = db.relationship('DetalleCompra', backref='compra')
+
+class DetalleCompra(db.Model):
+    __tablename__ = 'detalleCompra'
+    idDetalleCompra = db.Column(db.Integer(), primary_key=True)
+    idCompra = db.Column(db.Integer(), db.ForeignKey('compras.idCompra'), nullable=False)
+    idProducto = db.Column(db.Integer(), db.ForeignKey('productos.idProducto'), nullable=False)
+    cantidad = db.Column(db.Integer(), nullable=False)
+    costo = db.Column(db.Float(), nullable=False)
+
+class Pedidos(db.Model):
+    __tablename__ = 'v_detalle_compras'
+    CompraId = db.Column(db.Integer(), primary_key=True)
+    fechaCompra = db.Column(db.DateTime(), nullable=False)
+    UsuarioID = db.Column(db.Integer(), nullable=False)
+    UsuarioNombre = db.Column(db.String(255), nullable=False)
+    ProductoNombre = db.Column(db.String(255), nullable=False)
+    cantidad = db.Column(db.Integer(), nullable=False)
+    costo = db.Column(db.Float(), nullable=False)
+    subtotal = db.Column(db.Float(), nullable=False)
+
+
+

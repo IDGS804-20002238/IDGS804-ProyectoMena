@@ -53,6 +53,9 @@
                     <li><a href="{{ url_for('auth.login') }}">Acceder</a></li>
                     <li><a href="{{ url_for('auth.register') }}">Registro</a></li>
                     {% endif %}
+                    {% if current_user.is_authenticated and current_user.id == 1 or current_user.id == 2 or current_user.id == 4 %}
+                    <li><a href="{{ url_for('pedidos.verPedidos') }}">Mis Pedidos</a></li>
+                    {% endif %}
                     {% if current_user.is_authenticated %}
                     <li><a href="{{ url_for('auth.logout') }}">Salir</a></li>
                     {% endif %}
@@ -141,7 +144,7 @@
             
                 for (var idProducto in carrito) {
                     var producto = carrito[idProducto];
-                    tabla += "<tr>";
+                    tabla += "<tr class='producto-row'>";
                     tabla += "<td>" + producto.nombre + "</td>";
                     tabla += "<td class='costo' data-precio='" + producto.precio.toFixed(2) + "'>$" + producto.precio.toFixed(2) + "</td>";
                     tabla += "<td><input type='number' class='cantidad' min='1' max='1000' pattern='[0-9]*' value='" + producto.cantidad + "'></input></td>";
@@ -286,7 +289,51 @@ $(document).ready(function(){
                 actualizarSubtotal();
               });
 
+              
 
+              var productos = [];
+
+              $('#comprarBtn').click(function(event) {
+                // Evitar que la página se recargue
+                event.preventDefault();
+                var productos = [];
+                $(".producto-row").each(function(event) {
+                  var id = $(this).find(".btn-danger").val();
+                  var cantidad = $(this).find(".cantidad").val();
+                  var precio = $(this).find(".costo").data("precio");
+                  var total = cantidad * precio;
+                  productos.push({id: id, cantidad: cantidad, precio: precio, total: total});
+                });
+                // Obtener el subtotal
+                var subtotal = productos.reduce(function(total, producto) {
+                  return total + producto.total;
+                }, 0);
+                // Convertir los datos a una cadena JSON
+                var data = JSON.stringify({
+                  productos: productos,
+                  subtotal: subtotal
+                });
+                // Enviar la solicitud AJAX
+                console.log(data);
+                $.ajax({
+                  type: "POST",
+                  url: "/pedidos/crear_pedido",
+                  data: data,
+                  contentType: 'application/json;charset=UTF-8',
+                  success: function(response) {
+                    // Manejar la respuesta del servidor
+                    console.log(response);
+                  },
+                  error: function(error) {
+                    // Manejar el error
+                    console.log(error);
+                  }
+                });
+              });
+
+
+
+              
             //fin docuemntready
         })
     </script>
