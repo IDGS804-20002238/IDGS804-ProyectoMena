@@ -28,12 +28,14 @@ def galeria():
 
 @productos.route('/listaProductos')
 @login_required
-@roles_required('Admin')
 def listaProductos():
-    productos = Productos.query.filter_by(estatus=1).all()
-    productos2 = Productos.query.filter_by(estatus=2).all() # filtrar productos con estatus=1
-    # logger.info('Listado de productos vista por el usuario: %s', current_user.name)
-    return render_template('/productos/listaProductos.html', productos1=productos, productos2=productos2)
+    if current_user.idrole == 1:
+        productos = Productos.query.filter_by(estatus=1).all()
+        productos2 = Productos.query.filter_by(estatus=2).all()
+        return render_template('/productos/listaProductos.html', productos1=productos, productos2=productos2)
+    else:
+        flash('No tiene permisos para acceder a esta vista.')
+        return redirect(url_for('main.profile'))
 
 @productos.route('/addProducto')
 @login_required

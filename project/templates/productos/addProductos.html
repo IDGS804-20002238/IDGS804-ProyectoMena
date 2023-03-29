@@ -32,7 +32,7 @@
                     </div>
                     <div class="col-md-6 form-group mt-3 mt-md-0">
                         <label for="precio">Precio</label>
-                        <input type="text" name="precio" class="form-control" id="text2" placeholder="Precio" required>
+                        <input type="number" name="precio" class="form-control" id="text2" placeholder="Precio" required oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                     </div>
                     <div class="col-md-6 form-group mt-3 mt-md-0">
                         <label for="tipo_producto">Tipo de Producto</label>

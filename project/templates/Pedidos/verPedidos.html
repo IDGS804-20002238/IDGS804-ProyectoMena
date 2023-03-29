@@ -24,34 +24,33 @@
     <!-- ======= Contact Section ======= -->
     <section>
         <div class="container">
-          <table>
+          <table id="myTable" class="display">
             <thead>
               <tr>
-                <th>Compra ID</th>
+                <th>Estatus</th>
                 <th>Fecha de Compra</th>
-                <th>Usuario ID</th>
-                <th>Usuario Nombre</th>
-                <th>Producto Nombre</th>
-                <th>Cantidad</th>
-                <th>Costo</th>
                 <th>Subtotal</th>
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
-              {% for compra_id, detalles in detalles_por_compra.items() %}
+              {% for detalle in detalles %}
               <tr>
-                <td>{{ compra_id }}</td>
-                {% for detalle in detalles %}
+                
+                <td>{{ detalle.descripcionEstatus }}</td>
                 <td>{{ detalle.fechaCompra }}</td>
-                <td>{{ detalle.UsuarioID }}</td>
-                <td>{{ detalle.UsuarioNombre }}</td>
-                <td>{{ detalle.ProductoNombre }}</td>
-                <td>{{ detalle.cantidad }}</td>
-                <td>{{ detalle.costo }}</td>
-                <td>{{ detalle.subtotal }}</td>
-                </tr><tr>
-                <td></td>
-                {% endfor %}
+                <td>${{ detalle.subtotal }}.00</td>
+                <td>
+                  {% if current_user.is_authenticated %}
+                    {% if current_user.id == 1 or current_user.id == 2 %}
+                      <button class="btn btn-danger">Cancelar</button>
+                      <button class="btn btn-warning">Cambiar Estatus</button>
+                    {% elif current_user.id == 4 %}
+                      <button class="btn btn-danger">Cancelar</button>
+                    {% endif %}
+                  {% endif %}
+                </td>
+                
               </tr>
               {% endfor %}
             </tbody>

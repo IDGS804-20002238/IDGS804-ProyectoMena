@@ -16,9 +16,13 @@ def login_post():
     remember = True if request.form.get('remember') else False
     user = User.query.filter_by(email=email).first()
 
-    if not user or not check_password_hash(user.password, password):
+    if not user:
         flash('El usuario y/o la contraseña son incorrectos')
-        return redirect(url_for('auth.login')) #Si el usuario no existe o el password es incorrecto regresamos a login
+        return redirect(url_for('auth.login'))
+
+    if not check_password_hash(user.password, password):
+        flash('El usuario y/o la contraseña son incorrectos')
+        return redirect(url_for('auth.login'))
     
     login_user(user, remember=remember)
     return redirect(url_for('main.profile'))
@@ -34,19 +38,18 @@ def register_post():
     name = request.form.get('name')
     password = request.form.get('password')
 
-    user = User.query.filter_by(email=email).first()
+    user = User.query.filter_by(email=email).first() # recuperar el primer elemento de la lista
 
-    if user: 
+    if user:
         flash('El correo electrónico ya existe')
         return redirect(url_for('auth.register'))
 
-    userDataStore.create_user(
-        name=name, email=email, password=generate_password_hash(password, method='sha256')
-    )
-
+    new_user = User(name=name, email=email, password=generate_password_hash(password, method='sha256'), idrole='4')
+    db.session.add(new_user)
     db.session.commit()
 
     return redirect(url_for('auth.login'))
+
 
 
 @auth.route('/logout')

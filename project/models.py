@@ -1,6 +1,7 @@
 from . import db
 from flask_sqlalchemy import SQLAlchemy
 from flask_security import UserMixin, RoleMixin
+from datetime import datetime
 
 
 
@@ -39,17 +40,13 @@ class TipoProducto(db.Model):
     tipoProductoID = db.Column(db.Integer, primary_key=True)
     nombreProducto = db.Column(db.String(255), nullable=False)
 
-roles_users = db.Table('roles_users',
-        db.Column('userId', db.Integer(), db.ForeignKey('user.id')),
-        db.Column('roleId', db.Integer(), db.ForeignKey('role.id')))
 
 
 class Role(db.Model, RoleMixin):
     __tablename__ = 'role'
-    id = db.Column(db.Integer(), primary_key=True)
+    idrole = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(80), unique=True)
     description = db.Column(db.String(255))
-
 
 class User(db.Model, UserMixin):
     __tablename__ = 'user'
@@ -57,10 +54,13 @@ class User(db.Model, UserMixin):
     name = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(255), unique=True)
     password = db.Column(db.String(255), nullable=False)
-    active = db.Column(db.Boolean())
-    confirmed_at = db.Column(db.DateTime())
-    roles = db.relationship('Role', secondary=roles_users,
-                            backref=db.backref('users', lazy='dynamic'))
+    active = db.Column(db.Boolean(), default=True)
+    confirmed_at = db.Column(db.DateTime(), default=datetime.utcnow)
+    idrole = db.Column(db.Integer, db.ForeignKey('role.idrole'), nullable=False)
+    role = db.relationship('Role')
+
+
+
 
 class MateriaPrima(db.Model):
     __tablename__ = 'materiaPrima'
@@ -97,5 +97,11 @@ class Pedidos(db.Model):
     costo = db.Column(db.Float(), nullable=False)
     subtotal = db.Column(db.Float(), nullable=False)
 
-
+class v_compras_estatus (db.Model):
+    __tablename__ = 'v_compras_estatus'
+    idCompra = db.Column(db.Integer, primary_key=True)
+    fechaCompra = db.Column(db.DateTime, nullable=False)
+    id = db.Column(db.Integer, nullable=False)
+    subtotal = db.Column(db.Float, nullable=False)
+    descripcionEstatus = db.Column(db.String(255), nullable=False)
 

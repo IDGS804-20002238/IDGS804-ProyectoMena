@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, redirect, url_for, request, flash,
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_security import login_required, current_user, roles_required
 from flask_security.utils import login_user, logout_user, hash_password, encrypt_password
-from ..models import Productos, TipoProducto, Compra, Pedidos,DetalleCompra
+from ..models import Productos, TipoProducto, Compra, Pedidos,DetalleCompra, v_compras_estatus
 from .. import db
 import os
 from os.path import abspath, dirname, join
@@ -18,12 +18,8 @@ pedidos = Blueprint('pedidos', __name__, url_prefix='/pedidos')
 @login_required
 @roles_required('Admin')
 def verPedidos():
-    detalles_por_compra = defaultdict(list)
-    detalles = Pedidos.query.all()
-    for detalle in detalles:
-        detalles_por_compra[detalle.CompraId].append(detalle)
-        print(detalles_por_compra)
-    return render_template('/pedidos/verPedidos.html', detalles_por_compra=detalles_por_compra)
+    detalles = v_compras_estatus.query.all()
+    return render_template('/pedidos/verPedidos.html', detalles=detalles)
 
 # @pedidos.route('/verPedidos')
 # @login_required

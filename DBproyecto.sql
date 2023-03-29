@@ -1,6 +1,9 @@
 USE mena;
 
-
+CREATE TABLE cat_Estatus(
+	estatus int NOT NULL PRIMARY KEY IDENTITY(1,1),
+	descripcionEstatus varchar(255) NOT NULL
+);
 CREATE TABLE material_usado(
   materialUsadoID int PRIMARY KEY  not null,
   telaUsada varchar(50) NOT NULL,
@@ -27,7 +30,7 @@ CREATE TABLE productos (
 );
 
 CREATE TABLE role (
-  id int NOT NULL PRIMARY KEY IDENTITY(1,1),
+  idrole int NOT NULL PRIMARY KEY IDENTITY(1,1),
   name varchar(80) DEFAULT NULL,
   description varchar(255) DEFAULT NULL
 );
@@ -37,11 +40,12 @@ CREATE TABLE [user] (
   name varchar(50) NOT NULL,
   email varchar(255) DEFAULT NULL,
   password varchar(255) NOT NULL,
-  active tinyint DEFAULT NULL,
-  confirmed_at datetime DEFAULT NULL,
-  UNIQUE (email)
+  active tinyint DEFAULT 1,
+  confirmed_at datetime DEFAULT GETDATE(),
+  idrole INT not null default 4,
+  UNIQUE (email),
+  CONSTRAINT fk_rol_id FOREIGN KEY (idrole) REFERENCES role(idrole)
 );
-
 CREATE TABLE compras (
   idCompra int NOT NULL PRIMARY KEY IDENTITY(1,1),
   fechaCompra datetime NOT NULL,
@@ -60,14 +64,14 @@ CREATE TABLE detalleCompra (
   CONSTRAINT fk_compras_idCompra FOREIGN KEY (idCompra) REFERENCES compras(idCompra),
   CONSTRAINT fk_compras_idProducto FOREIGN KEY (idProducto) REFERENCES productos(idProducto)
 );
-
+/*
 CREATE TABLE roles_users (
   userId int DEFAULT NULL ,
   roleId int DEFAULT NULL,
   FOREIGN KEY (userId) REFERENCES [user](id),
   FOREIGN KEY (roleId) REFERENCES role(id)
 );
-
+*/
 CREATE TABLE materiaPrima (
   materiaPrimaId int NOT NULL PRIMARY KEY IDENTITY(1,1),
   image_name varchar(255) DEFAULT NULL,
@@ -87,11 +91,14 @@ JOIN tipo_producto t ON p.tipoProductoID = t.tipoProductoID
 JOIN material_usado m ON t.materialUsadoID = m.materialUsadoID;
 
 CREATE VIEW v_detalle_compras AS
-SELECT c.idCompra AS CompraId, c.fechaCompra, u.id AS UsuarioID, u.name AS UsuarioNombre, p.nombre AS ProductoNombre, dc.cantidad, dc.costo, dc.cantidad * dc.costo AS subtotal
+SELECT c.idCompra AS CompraId, c.fechaCompra, u.id AS UsuarioID, u.name AS UsuarioNombre, p.nombre AS ProductoNombre, dc.cantidad, dc.costo, dc.cantidad * dc.costo AS subtotal, e.descripcionEstatus AS Estatus
 FROM compras c
 INNER JOIN [user] u ON c.id = u.id
 INNER JOIN detalleCompra dc ON c.idCompra = dc.idCompra
-INNER JOIN productos p ON dc.idProducto = p.idProducto;
+INNER JOIN productos p ON dc.idProducto = p.idProducto
+INNER JOIN cat_Estatus e ON c.estatus = e.estatus;
+
+
 
 CREATE VIEW v_roles_users AS
 SELECT u.id AS userId, u.name AS userName, r.id AS roleId, r.name AS roleName
@@ -99,15 +106,19 @@ FROM roles_users ru
 INNER JOIN [user] u ON ru.userId = u.id
 INNER JOIN role r ON ru.roleId = r.id;
 
+CREATE VIEW v_compras_estatus AS
+SELECT c.idCompra, c.fechaCompra, c.id, c.subtotal, e.descripcionEstatus
+FROM compras c
+INNER JOIN cat_Estatus e ON c.estatus = e.estatus;
 
 
 ----------------------------------------------------------INSERTS---------------------------------------------------------
 SET IDENTITY_INSERT [user] ON
-INSERT INTO [user] (id, name, [email], [password], [active], [confirmed_at]) 
+INSERT INTO [user] (id, name, [email], [password]) 
 VALUES
-(1,'angel', 'angeltovar308@gmail.com', 'sha256$5DGfv5cgFrKbMZz3$52389e87feb6e1a17cad14d8fe8fcef25bbecb0564c6a7ec4752e99f55328d79', 1, NULL),
-(2,'Jose', 'angro1212@gmail.com', 'sha256$6j2avdMEX7UgH3HT$a9ea793320d38ead008540397c27054079389b76e12ab9b99da9568af83b5e53', 1, NULL),
-(3,'pedro', '3@gmail.com', 'sha256$ERUhmMIzpUKtOSw4$eddbb4db44c30094412ebfebdfe42db31de476ae19d75d41193bf281325048a0', 1, NULL);
+(1,'angel', 'angeltovar308@gmail.com', 'sha256$5DGfv5cgFrKbMZz3$52389e87feb6e1a17cad14d8fe8fcef25bbecb0564c6a7ec4752e99f55328d79'),
+(2,'Jose', 'angro1212@gmail.com', 'sha256$6j2avdMEX7UgH3HT$a9ea793320d38ead008540397c27054079389b76e12ab9b99da9568af83b5e53'),
+(3,'pedro', '3@gmail.com', 'sha256$ERUhmMIzpUKtOSw4$eddbb4db44c30094412ebfebdfe42db31de476ae19d75d41193bf281325048a0');
 SET IDENTITY_INSERT [user] OFF
 
 SET IDENTITY_INSERT role ON
@@ -118,17 +129,19 @@ INSERT INTO role (id, name, description) VALUES
 (4, 'Cliente', 'Cliente de la empresa');
 SET IDENTITY_INSERT role OFF
 
-SET IDENTITY_INSERT productos ON
-INSERT INTO productos (idProducto, nombre, precio, image_name, estatus) VALUES
-(1, 'destiny', '123', '6.png', 1),
-(2, 'Halo Reach', '607', '4.png', 2);
-SET IDENTITY_INSERT productos OFF
-
-
 INSERT INTO roles_users (userId, roleId) VALUES
 (1, 1),
 (2, 2),
 (3,4);
+-- Insertar datos en la tabla productos
+SET IDENTITY_INSERT productos ON
+INSERT INTO productos (idProducto,nombre, precio, tipoProductoID, image_name, estatus)
+VALUES
+  (1,'Botiquin de Primeros Auxilios Rojo', '514', 1, 'descargar_4.png', 1),
+  (2,'Botiquin de Primeros Auxilios Azul', '698', 2, 'botiquinAzul.png', 1),
+  (3,'Botiquin de Primeros Auxilios Blanco', '731', 1, 'botiquinBlanco.png', 1),
+  (4,'Botiquin de Primeros Auxilios Militar', '6969', 4, 'botiquinMilitar.png', 1);
+SET IDENTITY_INSERT productos OFF
 
 -- Insertar datos en la tabla material_usado
 INSERT INTO material_usado (materialUsadoID, telaUsada, cantidadTela, hiloUsado, cierreUsado)
@@ -159,44 +172,64 @@ VALUES
 	('Hilo','Hilo.png',10),
 	('Cierre','Cierre.png',10);
 
+SET IDENTITY_INSERT cat_Estatus ON
+INSERT INTO cat_Estatus (estatus,descripcionEstatus) 
+values
+	(1,'PEDIDO CREADO'),
+	(2,'PEDIDO ACEPTADO'),
+	(3,'PEDIDO ENVIADO'),
+	(4,'PEDIDO ENTREGADO'),
+	(5,'PEDIDO CANCELADO');
+SET IDENTITY_INSERT cat_Estatus OFF
 
+ALTER TABLE [user] ALTER COLUMN active TINYINT NOT NULL DEFAULT 1;
 ----------------------------------------------------------querys---------------------------------------------------------
 /*
 USE mena;
-DROP TABLE roles_users;
 DROP TABLE [user];
 DROP TABLE role;
+DROP TABLE roles_users;
 DROP TABLE productos;
 DROP TABLE material_usado;
 DROP TABLE tipo_producto;
 DROP TABLE materiaPrima;
 DROP TABLE compras;
 DROP TABLE detalleCompra;
+DROP TABLE cat_Estatus;
 
 
 DROP VIEW v_tipo_producto;
 DROP VIEW v_detalle_producto;
 DROP VIEW v_detalle_compras;
 DROP VIEW v_roles_users;
+DROP VIEW v_compras_estatus;
 
 
-select * from roles_users;
+
 select * from [user];
 select * from role;
+select * from roles_users;
 select * from productos;
 select * from material_usado;
 select * from tipo_producto;
 select * from materiaPrima;
 select * from compras;
 select * from detalleCompra;
+select * from cat_Estatus;
 
 
 select * from v_tipo_producto;
 select * from v_detalle_producto;
 select * from v_detalle_compras;
 select * from v_roles_users;
+select * from v_compras_estatus;
+
+
+
+
+
+
+
+UPDATE [user]
+SET active = 1 WHERE id=6;
 */
-SELECT name
-FROM sys.foreign_keys
-WHERE parent_object_id = OBJECT_ID('[user]')
-  AND referenced_object_id = OBJECT_ID('compras');
