@@ -90,13 +90,16 @@ FROM productos p
 JOIN tipo_producto t ON p.tipoProductoID = t.tipoProductoID
 JOIN material_usado m ON t.materialUsadoID = m.materialUsadoID;
 
-CREATE VIEW v_detalle_compras AS
-SELECT c.idCompra AS CompraId, c.fechaCompra, u.id AS UsuarioID, u.name AS UsuarioNombre, p.nombre AS ProductoNombre, dc.cantidad, dc.costo, dc.cantidad * dc.costo AS subtotal, e.descripcionEstatus AS Estatus
+CREATE VIEW v_detalle_compras
+AS
+SELECT dc.idDetalleCompra, c.idCompra AS CompraId, c.fechaCompra, u.id AS UsuarioID, u.name AS UsuarioNombre, p.nombre AS ProductoNombre, dc.cantidad, dc.costo, dc.cantidad * dc.costo AS subtotal, e.descripcionEstatus AS Estatus
 FROM compras c
 INNER JOIN [user] u ON c.id = u.id
 INNER JOIN detalleCompra dc ON c.idCompra = dc.idCompra
 INNER JOIN productos p ON dc.idProducto = p.idProducto
-INNER JOIN cat_Estatus e ON c.estatus = e.estatus;
+INNER JOIN cat_Estatus e ON c.estatus = e.estatus
+WITH CHECK OPTION;
+
 
 
 
@@ -208,7 +211,6 @@ DROP VIEW v_compras_estatus;
 
 select * from [user];
 select * from role;
-select * from roles_users;
 select * from productos;
 select * from material_usado;
 select * from tipo_producto;
@@ -233,3 +235,7 @@ select * from v_compras_estatus;
 UPDATE [user]
 SET active = 1 WHERE id=6;
 */
+UPDATE compras
+SET estatus = 1 WHERE id=3;
+
+select * from v_detalle_compras where CompraId= 1

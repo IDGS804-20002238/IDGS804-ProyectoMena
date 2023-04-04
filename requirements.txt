@@ -33,3 +33,4 @@ WTForms
 python-dotenv
 pymysql
 pyodbc
+pandas

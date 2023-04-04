@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<main id="main">
+
+    <!-- ======= Breadcrumbs ======= -->
+    <section id="breadcrumbs" class="breadcrumbs">
+        <div class="container">
+
+            <div class="d-flex justify-content-between align-items-center">
+                <h2>Pedidos</h2>
+            </div>
+
+        </div>
+    </section><!-- End Breadcrumbs -->
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="alert alert-warning" role="alert">
+        {{ messages[0] }}.</a>.
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <section>
+        <h1>Detalles del pedido {{ pedido[0].CompraId }}</h1>
+        <div class="container">
+            <table id="myTable" class="display table mt-5">
+            <tr>
+                <th>Fecha de compra</th>
+                <th>Nombre de usuario</th>
+                <th>Nombre de producto</th>
+                <th>Cantidad</th>
+                <th>Costo</th>
+                <th>Subtotal</th>
+            </tr>
+            {% for p in pedido %}
+            <tr>
+                <td>{{ p.fechaCompra }}</td>
+                <td>{{ p.UsuarioNombre }}</td>
+                <td>{{ p.ProductoNombre }}</td>
+                <td>{{ p.cantidad }}</td>
+                <td>{{ p.costo }}</td>
+                <td>{{ p.subtotal }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        </div>
+    </section>
+    
+    
+</main><!-- End #main -->
+{% endblock %}

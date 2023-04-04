@@ -29,7 +29,7 @@ def galeria():
 @productos.route('/listaProductos')
 @login_required
 def listaProductos():
-    if current_user.idrole == 1:
+    if (current_user.idrole == 1 or current_user.idrole == 2):
         productos = Productos.query.filter_by(estatus=1).all()
         productos2 = Productos.query.filter_by(estatus=2).all()
         return render_template('/productos/listaProductos.html', productos1=productos, productos2=productos2)
@@ -39,10 +39,13 @@ def listaProductos():
 
 @productos.route('/addProducto')
 @login_required
-@roles_required('Admin')
 def addProducto():
-    tipos = TipoProducto.query.all()
-    return render_template('/productos/addProductos.html', tipos=tipos)
+    if (current_user.idrole == 1 or current_user.idrole == 2):
+        tipos = TipoProducto.query.all()
+        return render_template('/productos/addProductos.html', tipos=tipos)
+    else:
+        flash('No tiene permisos para acceder a esta vista.')
+        return redirect(url_for('main.profile'))
 
 
 
@@ -51,57 +54,20 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 @productos.route('/addProducto', methods=['POST'])
 @login_required
-@roles_required('Admin')
 def addProducto_post():
-    nombre = request.form.get('nombre')
-    precio = request.form.get('precio')
-    tipo_producto_id = request.form.get('tipo_producto')
-    file = request.files['file']
-    upload_path = os.path.join(current_app.static_folder, 'img', 'productos')
-    if 'file' not in request.files:
-        # logger.warning('No se ha seleccionado ningún archivo al agregar un producto')
-        flash('No se ha seleccionado ningún archivo.')
-        return redirect(request.url)
-    if file.filename == '':
-        # logger.warning('No se ha seleccionado un archivo al agregar un producto')
-        flash('No se ha seleccionado ningún archivo.')
-        return redirect(request.url)
-    if not allowed_file(file.filename):
-        # logger.warning('El formato del archivo no es válido al agregar un producto')
-        flash('Este archivo no es válido. Los formatos permitidos son: {}'.format(', '.join(ALLOWED_EXTENSIONS)))
-        return redirect(request.url)
-    if file and allowed_file(file.filename):
-        file_name = secure_filename(file.filename)
-        file.save(os.path.join(upload_path, file_name))
-        producto = Productos(nombre=nombre, precio=precio, image_name=file_name, tipoProductoID=tipo_producto_id)
-        db.session.add(producto)
-        db.session.commit()
-        # logger.info('El producto %s ha sido agregado exitosamente', nombre)
-        flash('Producto agregado exitosamente.')
-    return redirect(url_for('productos.listaProductos'))
-
-
-
-
-@productos.route('/updateProducto/<id>', methods=['POST','GET'])
-@login_required
-@roles_required('Admin')
-def updateProducto(id):
-    tipos = TipoProducto.query.all()
-    producto = Productos.query.get(id)
-    if request.method == 'POST':
+    if (current_user.idrole == 1 or current_user.idrole == 2):
         nombre = request.form.get('nombre')
         precio = request.form.get('precio')
         tipo_producto_id = request.form.get('tipo_producto')
+        file = request.files['file']
         upload_path = os.path.join(current_app.static_folder, 'img', 'productos')
         if 'file' not in request.files:
             # logger.warning('No se ha seleccionado ningún archivo al agregar un producto')
             flash('No se ha seleccionado ningún archivo.')
             return redirect(request.url)
-        file = request.files['file']
         if file.filename == '':
             # logger.warning('No se ha seleccionado un archivo al agregar un producto')
-            flash('No se ha seleccionado un archivo.')
+            flash('No se ha seleccionado ningún archivo.')
             return redirect(request.url)
         if not allowed_file(file.filename):
             # logger.warning('El formato del archivo no es válido al agregar un producto')
@@ -110,38 +76,86 @@ def updateProducto(id):
         if file and allowed_file(file.filename):
             file_name = secure_filename(file.filename)
             file.save(os.path.join(upload_path, file_name))
-            producto.nombre = nombre
-            producto.precio = precio
-            producto.image_name = file_name
-            producto.tipoProductoID = tipo_producto_id
+            producto = Productos(nombre=nombre, precio=precio, image_name=file_name, tipoProductoID=tipo_producto_id)
+            db.session.add(producto)
             db.session.commit()
             # logger.info('El producto %s ha sido agregado exitosamente', nombre)
-            flash('Producto Editado exitosamente.')
-            return redirect(url_for('productos.listaProductos'))
-    
-    return render_template('/productos/updateProductos.html', producto=producto,tipos=tipos)
+            flash('Producto agregado exitosamente.')
+        return redirect(url_for('productos.listaProductos'))
+    else:
+            flash('No tiene permisos para acceder a esta vista.')
+            return redirect(url_for('main.profile'))
+
+
+
+@productos.route('/updateProducto/<id>', methods=['POST','GET'])
+@login_required
+def updateProducto(id):
+    if (current_user.idrole == 1 or current_user.idrole == 2):
+        tipos = TipoProducto.query.all()
+        producto = Productos.query.get(id)
+        if request.method == 'POST':
+            nombre = request.form.get('nombre')
+            precio = request.form.get('precio')
+            tipo_producto_id = request.form.get('tipo_producto')
+            upload_path = os.path.join(current_app.static_folder, 'img', 'productos')
+            if 'file' not in request.files:
+                # logger.warning('No se ha seleccionado ningún archivo al agregar un producto')
+                flash('No se ha seleccionado ningún archivo.')
+                return redirect(request.url)
+            file = request.files['file']
+            if file.filename == '':
+                # logger.warning('No se ha seleccionado un archivo al agregar un producto')
+                flash('No se ha seleccionado un archivo.')
+                return redirect(request.url)
+            if not allowed_file(file.filename):
+                # logger.warning('El formato del archivo no es válido al agregar un producto')
+                flash('Este archivo no es válido. Los formatos permitidos son: {}'.format(', '.join(ALLOWED_EXTENSIONS)))
+                return redirect(request.url)
+            if file and allowed_file(file.filename):
+                file_name = secure_filename(file.filename)
+                file.save(os.path.join(upload_path, file_name))
+                producto.nombre = nombre
+                producto.precio = precio
+                producto.image_name = file_name
+                producto.tipoProductoID = tipo_producto_id
+                db.session.commit()
+                # logger.info('El producto %s ha sido agregado exitosamente', nombre)
+                flash('Producto Editado exitosamente.')
+                return redirect(url_for('productos.listaProductos'))
+        
+        return render_template('/productos/updateProductos.html', producto=producto,tipos=tipos)
+    else:
+        flash('No tiene permisos para acceder a esta vista.')
+        return redirect(url_for('main.profile'))
 
 @productos.route('/deleteProducto/<id>')
 @login_required
-@roles_required('Admin')
 def deleteProducto(id):
-    producto = Productos.query.get(id)
-    producto.estatus = 2
-    db.session.commit()
-    # logger.info('El producto se ha desactivado exitosamente.')
-    flash('Producto desactivado exitosamente.')
-    return redirect(url_for('productos.listaProductos'))
+    if (current_user.idrole == 1 or current_user.idrole == 2):
+        producto = Productos.query.get(id)
+        producto.estatus = 2
+        db.session.commit()
+        # logger.info('El producto se ha desactivado exitosamente.')
+        flash('Producto desactivado exitosamente.')
+        return redirect(url_for('productos.listaProductos'))
+    else:
+        flash('No tiene permisos para acceder a esta vista.')
+        return redirect(url_for('main.profile'))
 
 @productos.route('/activeProducto/<id>')
 @login_required
-@roles_required('Admin')
 def activeProducto(id):
-    producto = Productos.query.get(id)
-    producto.estatus = 1
-    db.session.commit()
-    # logger.info('El producto se ha desactivado exitosamente.')
-    flash('Producto activado exitosamente.')
-    return redirect(url_for('productos.listaProductos'))
+    if (current_user.idrole == 1 or current_user.idrole == 2):
+        producto = Productos.query.get(id)
+        producto.estatus = 1
+        db.session.commit()
+        # logger.info('El producto se ha desactivado exitosamente.')
+        flash('Producto activado exitosamente.')
+        return redirect(url_for('productos.listaProductos'))
+    else:
+        flash('No tiene permisos para acceder a esta vista.')
+        return redirect(url_for('main.profile'))
 
 
 def allowed_file(filename):

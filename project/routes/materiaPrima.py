@@ -15,7 +15,11 @@ materiaPrima = Blueprint('materiaPrima', __name__, url_prefix='/materiaPrima')
 @materiaPrima.route('/galeriaMateriaPrima')
 @login_required
 def galeriaMateriaPrima():
-    materiaPrima = MateriaPrima.query.all()
-    # logger.info('Galeria de productos vista por el usuario: %s', current_user.name)
-    return render_template('/Materia_Prima/materia_prima.html', materiaPrima=materiaPrima)
+    if (current_user.idrole == 1 or current_user.idrole == 2):
+        materiaPrima = MateriaPrima.query.all()
+        # logger.info('Galeria de productos vista por el usuario: %s', current_user.name)
+        return render_template('/Materia_Prima/materia_prima.html', materiaPrima=materiaPrima)
+    else:
+            flash('No tiene permisos para acceder a esta vista.')
+            return redirect(url_for('main.profile'))
 

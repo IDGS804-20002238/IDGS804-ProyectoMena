@@ -86,16 +86,30 @@ class DetalleCompra(db.Model):
     cantidad = db.Column(db.Integer(), nullable=False)
     costo = db.Column(db.Float(), nullable=False)
 
+# class Pedidos(db.Model):
+#     __tablename__ = 'v_detalle_compras'
+#     CompraId = db.Column(db.Integer(), primary_key=True)
+#     fechaCompra = db.Column(db.DateTime(), nullable=False)
+#     UsuarioID = db.Column(db.Integer(), nullable=False)
+#     UsuarioNombre = db.Column(db.String(255), nullable=False)
+#     ProductoNombre = db.Column(db.String(255), nullable=False)
+#     cantidad = db.Column(db.Integer(), nullable=False)
+#     costo = db.Column(db.Float(), nullable=False)
+#     subtotal = db.Column(db.Float(), nullable=False)
+
 class Pedidos(db.Model):
     __tablename__ = 'v_detalle_compras'
-    CompraId = db.Column(db.Integer(), primary_key=True)
-    fechaCompra = db.Column(db.DateTime(), nullable=False)
-    UsuarioID = db.Column(db.Integer(), nullable=False)
-    UsuarioNombre = db.Column(db.String(255), nullable=False)
-    ProductoNombre = db.Column(db.String(255), nullable=False)
-    cantidad = db.Column(db.Integer(), nullable=False)
-    costo = db.Column(db.Float(), nullable=False)
-    subtotal = db.Column(db.Float(), nullable=False)
+    idDetalleCompra = db.Column(db.Integer, primary_key=True)
+    CompraId = db.Column(db.Integer)
+    fechaCompra = db.Column(db.DateTime)
+    UsuarioID = db.Column(db.Integer)
+    UsuarioNombre = db.Column(db.String(255))
+    ProductoNombre = db.Column(db.String(255))
+    cantidad = db.Column(db.Integer)
+    costo = db.Column(db.Float)
+    subtotal = db.Column(db.Float)
+    Estatus = db.Column(db.String(255))
+
 
 class v_compras_estatus (db.Model):
     __tablename__ = 'v_compras_estatus'

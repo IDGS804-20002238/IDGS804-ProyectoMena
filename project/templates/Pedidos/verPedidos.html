@@ -39,16 +39,17 @@
                 
                 <td>{{ detalle.descripcionEstatus }}</td>
                 <td>{{ detalle.fechaCompra }}</td>
-                <td>${{ detalle.subtotal }}.00</td>
+                <td>${{ detalle.subtotal }}</td>
                 <td>
-                  {% if current_user.is_authenticated %}
-                    {% if current_user.id == 1 or current_user.id == 2 %}
-                      <button class="btn btn-danger">Cancelar</button>
+                    {% if (current_user.idrole == 1 or current_user.idrole == 2) %}
                       <button class="btn btn-warning">Cambiar Estatus</button>
-                    {% elif current_user.id == 4 %}
-                      <button class="btn btn-danger">Cancelar</button>
                     {% endif %}
-                  {% endif %}
+                    {% if detalle.descripcionEstatus != 'PEDIDO CANCELADO' and (current_user.idrole == 1 or current_user.idrole == 2 or current_user.idrole == 4) %}
+                      <button class="btn btn-danger btnCancelarPedido" value="{{ detalle.idCompra }}" >Cancelar</button>
+                    {% endif %}
+                    {% if (current_user.idrole == 1 or current_user.idrole == 2 or current_user.idrole == 4) %}
+                    <button class="btn btn-warning"><a class="btnVerDetalle" href="{{ url_for('pedidos.ver_detalle', idPedido=detalle.idCompra) }}">Ver Detalle</a></button>
+                    {% endif %}
                 </td>
                 
               </tr>
