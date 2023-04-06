@@ -92,7 +92,7 @@ JOIN material_usado m ON t.materialUsadoID = m.materialUsadoID;
 
 CREATE VIEW v_detalle_compras
 AS
-SELECT dc.idDetalleCompra, c.idCompra AS CompraId, c.fechaCompra, u.id AS UsuarioID, u.name AS UsuarioNombre, p.nombre AS ProductoNombre, dc.cantidad, dc.costo, dc.cantidad * dc.costo AS subtotal, e.descripcionEstatus AS Estatus
+SELECT dc.idDetalleCompra, c.idCompra AS CompraId, c.fechaCompra, u.id AS UsuarioID, u.name AS UsuarioNombre, p.nombre AS ProductoNombre, p.tipoProductoID, dc.cantidad, dc.costo, dc.cantidad * dc.costo AS subtotal, e.descripcionEstatus AS Estatus
 FROM compras c
 INNER JOIN [user] u ON c.id = u.id
 INNER JOIN detalleCompra dc ON c.idCompra = dc.idCompra
@@ -110,9 +110,30 @@ INNER JOIN [user] u ON ru.userId = u.id
 INNER JOIN role r ON ru.roleId = r.id;
 
 CREATE VIEW v_compras_estatus AS
-SELECT c.idCompra, c.fechaCompra, c.id, c.subtotal, e.descripcionEstatus
+SELECT c.idCompra, c.fechaCompra, c.id,u.name as userName, c.subtotal, e.descripcionEstatus
 FROM compras c
-INNER JOIN cat_Estatus e ON c.estatus = e.estatus;
+INNER JOIN cat_Estatus e ON c.estatus = e.estatus
+INNER JOIN [user] u ON c.id = u.id;
+
+
+CREATE VIEW v_detalle_compras_con_material AS
+SELECT dc.idDetalleCompra, c.idCompra AS CompraId, c.fechaCompra, u.id AS UsuarioID, u.name AS UsuarioNombre, 
+       p.nombre AS ProductoNombre, p.tipoProductoID, 
+       dc.cantidad, dc.costo, dc.cantidad * dc.costo AS subtotal, 
+       e.descripcionEstatus AS Estatus,
+       tp.materialUsadoID,
+       telaUsada, 
+       mu.cantidadTela * dc.cantidad AS cantidadTela, 
+       mu.hiloUsado * dc.cantidad AS hiloUsado, 
+       mu.cierreUsado * dc.cantidad AS cierreUsado
+FROM compras c
+INNER JOIN [user] u ON c.id = u.id
+INNER JOIN detalleCompra dc ON c.idCompra = dc.idCompra
+INNER JOIN productos p ON dc.idProducto = p.idProducto
+INNER JOIN cat_Estatus e ON c.estatus = e.estatus
+LEFT JOIN tipo_producto tp ON p.tipoProductoID = tp.tipoProductoID
+LEFT JOIN material_usado mu ON tp.materialUsadoID = mu.materialUsadoID;
+
 
 
 ----------------------------------------------------------INSERTS---------------------------------------------------------
@@ -167,13 +188,13 @@ VALUES
 -- Insertar datos en la tabla materiaPrima
 INSERT INTO materiaPrima (nombreMateriaPrima,image_name,metrosMateriaPrima) 
 VALUES 
-	('Roja','telaRoja.png',100),
-	('Azul','telaAzul.png',100),
-	('Blanco','telaBlanca.png',100),
-	('Militar','telaMilitar.png',100),
-	('Mezclilla','telaMezclilla.png',100),
-	('Hilo','Hilo.png',10),
-	('Cierre','Cierre.png',10);
+	('Roja','telaRoja.png',1000),
+	('Azul','telaAzul.png',1000),
+	('Blanco','telaBlanca.png',1000),
+	('Militar','telaMilitar.png',1000),
+	('Mezclilla','telaMezclilla.png',1000),
+	('Hilo','Hilo.png',100),
+	('Cierre','Cierre.png',100);
 
 SET IDENTITY_INSERT cat_Estatus ON
 INSERT INTO cat_Estatus (estatus,descripcionEstatus) 
@@ -206,6 +227,7 @@ DROP VIEW v_detalle_producto;
 DROP VIEW v_detalle_compras;
 DROP VIEW v_roles_users;
 DROP VIEW v_compras_estatus;
+DROP VIEW v_detalle_compras_con_material;
 
 
 
@@ -225,7 +247,7 @@ select * from v_detalle_producto;
 select * from v_detalle_compras;
 select * from v_roles_users;
 select * from v_compras_estatus;
-
+select * from v_detalle_compras_con_material;
 
 
 
@@ -235,7 +257,4 @@ select * from v_compras_estatus;
 UPDATE [user]
 SET active = 1 WHERE id=6;
 */
-UPDATE compras
-SET estatus = 1 WHERE id=3;
 
-select * from v_detalle_compras where CompraId= 1

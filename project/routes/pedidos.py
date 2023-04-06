@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, redirect, url_for, request, flash,
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_security import login_required, current_user, roles_required
 from flask_security.utils import login_user, logout_user, hash_password, encrypt_password
-from ..models import Productos, TipoProducto, Compra, Pedidos,DetalleCompra, v_compras_estatus
+from ..models import Productos, TipoProducto, Compra, Pedidos,DetalleCompra, v_compras_estatus,descontarMaterial,MateriaPrima
 from ..import db
 from os.path import abspath, dirname, join
 from werkzeug.utils import secure_filename
@@ -20,6 +20,9 @@ pedidos = Blueprint('pedidos', __name__, url_prefix='/pedidos')
 def verPedidos():
     if (current_user.idrole == 1 or current_user.idrole == 2):
         detalles = v_compras_estatus.query.all()
+        return render_template('/pedidos/verPedidos.html', detalles=detalles)
+    if (current_user.idrole == 3):
+        detalles = v_compras_estatus.query.filter(v_compras_estatus.descripcionEstatus == 'PEDIDO ENVIADO').all()
         return render_template('/pedidos/verPedidos.html', detalles=detalles)
     if current_user.idrole == 4:
         detalles = v_compras_estatus.query.filter_by(id=current_user.id).all()
@@ -87,6 +90,69 @@ def ver_detalle(idPedido):
 
 
 
+
+
+@pedidos.route('/actualizar_compra', methods=['GET', 'POST'])
+def actualizar_compra():
+    idCompra = request.get_json()['idCompra']
+    compras = descontarMaterial.query.filter_by(CompraId=idCompra).all()
+
+    for compra in compras:
+        materialUsadoID = compra.materialUsadoID
+        telaUsada = compra.telaUsada
+        cantidadTela = compra.cantidadTela
+        hiloUsado = compra.hiloUsado
+        cierreUsado = compra.cierreUsado
+        # Descontar la tela utilizada
+        materiales = MateriaPrima.query.filter_by(nombreMateriaPrima=telaUsada).all()
+        for material in materiales:
+            if material.metrosMateriaPrima >= cantidadTela:
+                material.metrosMateriaPrima -= cantidadTela
+                db.session.commit()
+            else:
+                # Si no hay suficiente materia prima, enviar un error
+                return jsonify({'status': 'error', 'message': 'No hay suficiente tela para completar la compra'})
+
+        # Descontar el hilo utilizado
+        hilo = MateriaPrima.query.filter_by(nombreMateriaPrima='Hilo').first()
+        if hilo.metrosMateriaPrima >= hiloUsado:
+            hilo.metrosMateriaPrima -= hiloUsado
+            db.session.commit()
+        else:
+            # Si no hay suficiente materia prima, enviar un error
+            return jsonify({'status': 'error', 'message': 'No hay suficiente hilo para completar la compra'})
+
+        # Descontar el cierre utilizado
+        cierre = MateriaPrima.query.filter_by(nombreMateriaPrima='Cierre').first()
+        if cierre.metrosMateriaPrima >= cierreUsado:
+            cierre.metrosMateriaPrima -= cierreUsado
+            db.session.commit()
+        else:
+            # Si no hay suficiente materia prima, enviar un error
+            return jsonify({'status': 'error', 'message': 'No hay suficiente cierre para completar la compra'})
+    # Actualizar la compra con el nuevo estatus
+    compra = Compra.query.get(idCompra)
+    compra.estatus = 2
+    db.session.commit()
+    return jsonify({'status': 'succes', 'message': 'La compra se ha actualizado correctamente'})   
+
+@pedidos.route('/enviarPedido', methods=['GET', 'POST'])
+def enviarPedido():
+    idCompra = request.get_json()['idCompra']
+    # Actualizar la compra con el nuevo estatus
+    compra = Compra.query.get(idCompra)
+    compra.estatus = 3
+    db.session.commit()
+    return jsonify({'status': 'succes', 'message': 'La compra se ha actualizado correctamente'})
+
+@pedidos.route('/entregarPedido', methods=['GET', 'POST'])
+def entregarPedido():
+    idCompra = request.get_json()['idCompra']
+    # Actualizar la compra con el nuevo estatus
+    compra = Compra.query.get(idCompra)
+    compra.estatus = 4
+    db.session.commit()
+    return jsonify({'status': 'succes', 'message': 'La compra se ha actualizado correctamente'})
 
 
 

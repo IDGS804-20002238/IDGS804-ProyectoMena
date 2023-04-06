@@ -1,0 +1,41 @@
+Módulos del Sistema:
+
+o Autenticación de Usuario--
+este modulo es para el login 
+
+o Registro de Usuario--
+en este modulo se registran los usuarios nuevos
+
+o Materia Prima--
+en este modulo se vera toda la materia prima disponible 
+
+o Catálogo de Productos--
+en este modulo se verán los productos que esten disponibles para la compra
+
+o alta de productos--
+aqui se podrá dar de alta productos o dar de baja
+
+o carrito de compras-- 
+aqui se vera el carrito de compras y la validacion del metodo de pago
+
+o Pedidos--
+en este modulo se podra ver diferente dependiendo tu usuario
+
+cliente: vera su pedido con la opcion de cancelar y ver detalles del pedido
+
+administrador/empleado: tendra acceso a todos los pedidos de la tiene y podrá ver el detalle, cancelar, aceptar y marcar como enviado el pedido
+
+repartidor: solo podra ver los pedidos que se marquen como enviados, para el actualizar cuando el pedido sea entregado
+
+
+o Módulo Informativo--
+se vera la informacion de la empresa
+
+o Proveedores
+se podra dar de alta/baja proovedores, al igual que solicitar mas materia prima en caso de necesitarlo
+
+o alta de usuarios
+se podra dar de alta/baja a empleados asi como cambiar el rol del mismo
+
+o Finanzas
+en este modulo se verán los ingresos, gastos y ganancias de la empresa

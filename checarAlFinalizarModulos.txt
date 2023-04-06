@@ -1,0 +1,22 @@
+validar que el boton de comprar en el carrito no funcione si no hay nada en el carrito 
+validar que no se puedan enviar valores nulos en la tarjeta
+
+Módulos del Sistema
+o Autenticación de Usuario--
+o Registro de Usuario--
+o Catálogo de Productos--
+o alta de productos--
+o carrito de compras-- 
+o Pedidos--
+o Módulo Informativo--
+
+o Materia Prima
+o Proveedores
+o alta de usuarios
+o Finanzas
+
+
+
+
+
+

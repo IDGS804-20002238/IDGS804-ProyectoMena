@@ -113,7 +113,8 @@
             <li><a href="{{ url_for('auth.register') }}">Registro</a></li>
             {% endif %} {% if current_user.is_authenticated and
             (current_user.idrole == 1 or current_user.idrole == 2 or
-            current_user.idrole == 4) %}
+            current_user.idrole == 4 or
+            current_user.idrole == 3) %}
             <li>
               <a href="{{ url_for('pedidos.verPedidos') }}">Mis Pedidos</a>
             </li>
@@ -307,11 +308,98 @@
           }
         );
       }
+      function validarTarjeta(numeroTarjeta) {
+        // Convertir el número de tarjeta en una matriz de dígitos individuales
+        var digitos = numeroTarjeta.toString().split('').map(Number);
+        // Invertir la matriz de dígitos
+        digitos.reverse();
+        // Aplicar el algoritmo de Luhn
+        var suma = digitos.reduce(function(acumulador, valorActual, indice) {
+          if (indice % 2 === 1) {
+            valorActual *= 2;
+            if (valorActual > 9) {
+              valorActual -= 9;
+            }
+          }
+          return acumulador + valorActual;
+        }, 0);
+        // Comprobar si la suma total es divisible por 10
+        return suma % 10 === 0;
+      }
+      
+      function validarFechaVencimiento(mes, anio) {
+        // Obtener la fecha actual
+        var fechaActual = new Date();
+        var anioActual = parseInt(fechaActual.getFullYear().toString().substring(2));
+        var mesActual = fechaActual.getMonth() + 1; // Los meses van de 0 a 11, sumamos 1 para obtener el mes actual real
+        
+        // Verificar si el año es válido
+        if (anio < anioActual || anio > anioActual + 7) {
+          return false;
+        }
+        
+        // Verificar si el mes es válido
+        if (mes < 1 || mes > 12) {
+          return false;
+        }
+        
+        // Si el año es igual al año actual, verificar si el mes ha expirado
+        if (anio === anioActual && mes < mesActual) {
+          return false;
+        }
+        
+        // La fecha es válida y no ha expirado
+        return true;
+      }
+      
+      function validarFormulario() {
+        var numeroTarjeta = $("#input-numero-tarjeta").val();
+        var mes = parseInt($("#input-fecha-vencimiento-mes").val());
+        var anio = parseInt($("#input-fecha-vencimiento-anio").val());
+        var mensajeError = "";
+        var validado = true;
+        
+        if (!validarTarjeta(numeroTarjeta)) {
+          mensajeError += "El número de tarjeta no es válido. ";
+          validado = false;
+          $("#input-numero-tarjeta").css("border-color", "red");
+        } else {
+          $("#input-numero-tarjeta").css("border-color", "green");
+        }
+        
+        if (!validarFechaVencimiento(mes, anio)) {
+          mensajeError += "La fecha de vencimiento no es válida. ";
+          validado = false;
+
+          $("#input-fecha-vencimiento-mes").css("border-color", "red");
+          $("#input-fecha-vencimiento-anio").css("border-color", "red");
+        } else {
+          $("#input-fecha-vencimiento-mes").css("border-color", "green");
+          $("#input-fecha-vencimiento-anio").css("border-color", "green");
+        }
+        
+        $("#mensaje-error").text(mensajeError);
+        if (validado == true) {
+          $("#input-fecha-vencimiento-mes").prop('readonly', true);
+          $("#input-fecha-vencimiento-anio").prop('readonly', true);
+          $("#input-numero-tarjeta").prop('readonly', true);
+          $("#comprarBtn").show();
+          $("#btnVerificarTarjeta").hide();
+
+          
+        } else {
+          $("#comprarBtn").hide();
+        }
+        
+        return validado;
+      }
 
       //-------------------------------------------------------------------------------------------------------------------------------------
       //------------------------------------------------------------inicio document ready----------------------------------------------------
       //-------------------------------------------------------------------------------------------------------------------------------------
       $(document).ready(function () {
+        $("#comprarBtn").hide();
+
         let table = new DataTable("#myTable", {
           searching: true,
           paging: true,
@@ -396,8 +484,20 @@
           actualizarSubtotal();
         });
 
-        var productos = [];
 
+        // VALIDAR PAGO
+        $("#btnPago").click(function(){
+          $('#modalTarjeta').modal('show');
+          $('#modalCarrito').modal('hide');
+        });
+
+        $("#btnVerificarTarjeta").click(function(event) {
+          if (!validarFormulario()) {
+            event.preventDefault();
+          }
+        });
+
+        var productos = [];
         $("#comprarBtn").click(function (event) {
           // Evitar que la página se recargue
           event.preventDefault();
@@ -444,8 +544,11 @@
                   Swal.fire({
                     icon: "success",
                     title: "Pedido realizado",
-                    showConfirmButton: false,
-                    timer: 1500,
+                    showConfirmButton: true,
+                  }).then((result) => {
+                    if (result.isConfirmed) {
+                      location.reload();
+                    }
                   });
                 },
                 error: function (error) {
@@ -506,40 +609,144 @@
         });
         //-----------------------------------------fin cancelar pedido---------------------------------------------------
 
-        //-----------------------------------------Ver detalle-----------------------------------------------------------
-        /*   
-        $(".btnVerDetalle").click(function(){
-                var verDetalle = $(this).val();
-                var data = JSON.stringify({
-                    verDetalle: verDetalle,
-                });
-                console.log(data);
-                $.ajax({
-                    type: "POST",
-                    url: "/pedidos/ver_detalle",
-                    data: data,
-                    contentType: "application/json;charset=UTF-8",
-                    success: function(response) {
-                        console.log(response);
-                        var pedido = response.pedido;
-                        var table = $('#myTable').find('tbody');
-                        table.empty();
-                        for (var i = 0; i < pedido.length; i++) {
-                            var row = $('<tr>').appendTo(table);
-                            $('<td>').text(pedido[i].fechaCompra).appendTo(row);
-                            $('<td>').text(pedido[i].UsuarioID).appendTo(row);
-                            $('<td>').text(pedido[i].UsuarioNombre).appendTo(row);
-                            $('<td>').text(pedido[i].ProductoNombre).appendTo(row);
-                            $('<td>').text(pedido[i].cantidad).appendTo(row);
-                            $('<td>').text(pedido[i].costo).appendTo(row);
-                            $('<td>').text(pedido[i].subtotal).appendTo(row);
-                        }
-                    }
-                });
-            })
-*/
-        //-----------------------------------------Fin Ver detalle-------------------------------------------------------
+        //-----------------------------------------Inicio Cambiar Estatus---------------------------------------------------
 
+        $(".btnEnviar").click(function(){
+          var IDcompra = $(this).val();
+          var data = JSON.stringify({
+            idCompra: IDcompra,
+          });
+
+          Swal.fire({
+            title: "Enviar Pedido?",
+            text: "Al aceptar vas a enviar el pedido",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Si, enviar el pedido!",
+          }).then((result) => {
+            $.ajax({
+              type: "POST",
+              url: "/pedidos/enviarPedido",
+              data: data,
+              contentType: "application/json;charset=UTF-8",
+              success: function (response) {
+                console.log(response);
+                // Manejar la respuesta del servidor
+                Swal.fire({
+                  icon: "success",
+                  title: "Pedido Enviado",
+                  showConfirmButton: true,
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    location.reload();
+                  }
+                });
+              },
+              error: function (error) {
+                // Manejar el error
+                Swal.fire({
+                  icon: "error",
+                  title: "Oops...",
+                  text: "Algo salió mal!",
+                });
+              },
+            });
+          });
+
+        });
+
+        $(".btnEntregar").click(function(){
+          var IDcompra = $(this).val();
+          var data = JSON.stringify({
+            idCompra: IDcompra,
+          });
+
+          Swal.fire({
+            title: "Entregar Pedido?",
+            text: "Al aceptar vas a marcar como entregado",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Si!",
+          }).then((result) => {
+            $.ajax({
+              type: "POST",
+              url: "/pedidos/entregarPedido",
+              data: data,
+              contentType: "application/json;charset=UTF-8",
+              success: function (response) {
+                console.log(response);
+                // Manejar la respuesta del servidor
+                Swal.fire({
+                  icon: "success",
+                  title: "Pedido Entregado",
+                  showConfirmButton: true,
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    location.reload();
+                  }
+                });
+              },
+              error: function (error) {
+                // Manejar el error
+                Swal.fire({
+                  icon: "error",
+                  title: "Oops...",
+                  text: "Algo salió mal!",
+                });
+              },
+            });
+          });
+
+        });
+
+        $(".btnAceptar").click(function(){
+          var IDcompra = $(this).val();
+          var data = JSON.stringify({
+            idCompra: IDcompra,
+          });
+          Swal.fire({
+            title: "Aceptar Pedido?",
+            text: "Al aceptar el pedido se descontará la materia prima",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Si, aceptar!",
+          }).then((result) => {
+            $.ajax({
+              type: "POST",
+              url: "/pedidos/actualizar_compra",
+              data: data,
+              contentType: "application/json;charset=UTF-8",
+              success: function (response) {
+                // Manejar la respuesta del servidor
+                Swal.fire({
+                  icon: "success",
+                  title: "Pedido Aceptado",
+                  showConfirmButton: true,
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    location.reload();
+                  }
+                });
+              },
+              error: function (error) {
+                // Manejar el error
+                Swal.fire({
+                  icon: "error",
+                  title: "Oops...",
+                  text: "Algo salió mal!",
+                });
+              },
+            });
+          });
+        })
+        
+        //-----------------------------------------fin Cambiar Estatus---------------------------------------------------
         //fin docuemntready
       });
     </script>

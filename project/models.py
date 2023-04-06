@@ -116,6 +116,28 @@ class v_compras_estatus (db.Model):
     idCompra = db.Column(db.Integer, primary_key=True)
     fechaCompra = db.Column(db.DateTime, nullable=False)
     id = db.Column(db.Integer, nullable=False)
+    userName = db.Column(db.String(50), nullable=False)
     subtotal = db.Column(db.Float, nullable=False)
     descripcionEstatus = db.Column(db.String(255), nullable=False)
+
+class descontarMaterial(db.Model):
+    __tablename__ = 'v_detalle_compras_con_material'
+    idDetalleCompra = db.Column(db.Integer, primary_key=True)
+    CompraId = db.Column(db.Integer)
+    fechaCompra = db.Column(db.DateTime)
+    UsuarioID = db.Column(db.Integer)
+    UsuarioNombre = db.Column(db.String(255))
+    ProductoNombre = db.Column(db.String(255))
+    tipoProductoID = db.Column(db.Integer)
+    cantidad = db.Column(db.Integer)
+    costo = db.Column(db.Float)
+    subtotal = db.Column(db.Float)
+    Estatus = db.Column(db.String(255))
+    materialUsadoID = db.Column(db.Integer)
+    telaUsada = db.Column(db.String(255))
+    cantidadTela = db.Column(db.Integer)
+    hiloUsado = db.Column(db.Integer)
+    cierreUsado = db.Column(db.Integer)
+
+
 
