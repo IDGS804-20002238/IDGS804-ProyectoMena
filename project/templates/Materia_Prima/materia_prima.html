@@ -42,12 +42,7 @@
                         <td>{{materiaPrima.metrosMateriaPrima}}</td>
                         <td><img src="../static/img/MateriaPrima/{{materiaPrima.image_name}}" width="10" height="100" class="card-img-top" alt="..."></td>
                         <td>
-                             
-                                <button type="button" class="btn btn-warning">Actualizar</button>
-                             
-                             
-                                <button type="button" class="btn btn-danger" value="producto.idProducto">Desactivar</button>
-                             
+                                <button type="button" class="btn btn-warning"><a href="{{ url_for('materiaPrima.proovedores') }}">Comprar</a></button>   
                         </td>
                     </tr>
                     {%endfor%}

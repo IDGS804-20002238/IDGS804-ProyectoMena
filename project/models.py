@@ -139,5 +139,23 @@ class descontarMaterial(db.Model):
     hiloUsado = db.Column(db.Integer)
     cierreUsado = db.Column(db.Integer)
 
+class Proveedor(db.Model):
+    __tablename__ = 'proovedores'
+    proovedoresId = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    nombre = db.Column(db.String(250), nullable=False)
+    materiaPrima = db.Column(db.String(250), nullable=False)
+    costoxmetro = db.Column(db.String(250), nullable=False)
+    estatus = db.Column(db.Integer(), default=1)
+
+class CompraMateriaPrima(db.Model):
+    __tablename__ = 'compraMateriaPrima'
+    compraMateriaPrimaID = db.Column(db.Integer, primary_key=True)
+    proovedoresId = db.Column(db.Integer, db.ForeignKey('proovedores.proovedoresId'), nullable=False)
+    cantidadEnMetros = db.Column(db.Integer, nullable=False)
+    pagoTotal = db.Column(db.Integer, nullable=False)
+    confirmed_at = db.Column(db.DateTime, nullable=False, default=db.func.current_timestamp())
+
+
+
 
 

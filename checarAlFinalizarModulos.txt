@@ -9,9 +9,10 @@ o alta de productos--
 o carrito de compras-- 
 o Pedidos--
 o Módulo Informativo--
+o Materia Prima--
+o Proveedores--
 
-o Materia Prima
-o Proveedores
+
 o alta de usuarios
 o Finanzas
 

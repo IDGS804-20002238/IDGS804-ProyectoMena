@@ -1,5 +1,6 @@
 USE mena;
 
+
 CREATE TABLE cat_Estatus(
 	estatus int NOT NULL PRIMARY KEY IDENTITY(1,1),
 	descripcionEstatus varchar(255) NOT NULL
@@ -64,19 +65,29 @@ CREATE TABLE detalleCompra (
   CONSTRAINT fk_compras_idCompra FOREIGN KEY (idCompra) REFERENCES compras(idCompra),
   CONSTRAINT fk_compras_idProducto FOREIGN KEY (idProducto) REFERENCES productos(idProducto)
 );
-/*
-CREATE TABLE roles_users (
-  userId int DEFAULT NULL ,
-  roleId int DEFAULT NULL,
-  FOREIGN KEY (userId) REFERENCES [user](id),
-  FOREIGN KEY (roleId) REFERENCES role(id)
-);
-*/
+
 CREATE TABLE materiaPrima (
   materiaPrimaId int NOT NULL PRIMARY KEY IDENTITY(1,1),
   image_name varchar(255) DEFAULT NULL,
   nombreMateriaPrima varchar(255)NOT NULL,
   metrosMateriaPrima int NOT NULL
+);
+
+CREATE TABLE proovedores(
+	proovedoresId int NOT NULL PRIMARY KEY IDENTITY(1,1),
+	nombre varchar(250) NOT NULL,
+	materiaPrima varchar(250) NOT NULL,
+	costoxmetro varchar(250) NOT NULL,
+	estatus int NOT NULL DEFAULT 1
+);
+
+CREATE TABLE compraMateriaPrima(
+	compraMateriaPrimaID int NOT NULL PRIMARY KEY IDENTITY(1,1),
+	proovedoresId int NOT NULL,
+	cantidadEnMetros int NOT NULL,
+	pagoTotal int NOT NULL,
+	confirmed_at datetime DEFAULT GETDATE(),
+	CONSTRAINT fk_proovedores_proovedoresId FOREIGN KEY (proovedoresId) REFERENCES proovedores(proovedoresId),
 );
 
 ----------------------------------------------------------Vistas---------------------------------------------------------
@@ -137,35 +148,21 @@ LEFT JOIN material_usado mu ON tp.materialUsadoID = mu.materialUsadoID;
 
 
 ----------------------------------------------------------INSERTS---------------------------------------------------------
-SET IDENTITY_INSERT [user] ON
-INSERT INTO [user] (id, name, [email], [password]) 
-VALUES
-(1,'angel', 'angeltovar308@gmail.com', 'sha256$5DGfv5cgFrKbMZz3$52389e87feb6e1a17cad14d8fe8fcef25bbecb0564c6a7ec4752e99f55328d79'),
-(2,'Jose', 'angro1212@gmail.com', 'sha256$6j2avdMEX7UgH3HT$a9ea793320d38ead008540397c27054079389b76e12ab9b99da9568af83b5e53'),
-(3,'pedro', '3@gmail.com', 'sha256$ERUhmMIzpUKtOSw4$eddbb4db44c30094412ebfebdfe42db31de476ae19d75d41193bf281325048a0');
-SET IDENTITY_INSERT [user] OFF
-
 SET IDENTITY_INSERT role ON
-INSERT INTO role (id, name, description) VALUES
+INSERT INTO role (idrole, name, description) VALUES
 (1, 'Admin', 'administrador'),
 (2, 'Empleado', 'Empleado de la empresa'),
 (3, 'Repartidor', 'Repartidor de la emprea'),
 (4, 'Cliente', 'Cliente de la empresa');
 SET IDENTITY_INSERT role OFF
 
-INSERT INTO roles_users (userId, roleId) VALUES
-(1, 1),
-(2, 2),
-(3,4);
--- Insertar datos en la tabla productos
-SET IDENTITY_INSERT productos ON
-INSERT INTO productos (idProducto,nombre, precio, tipoProductoID, image_name, estatus)
+SET IDENTITY_INSERT [user] ON
+INSERT INTO [user] (id, name, [email], [password], active, idrole) 
 VALUES
-  (1,'Botiquin de Primeros Auxilios Rojo', '514', 1, 'descargar_4.png', 1),
-  (2,'Botiquin de Primeros Auxilios Azul', '698', 2, 'botiquinAzul.png', 1),
-  (3,'Botiquin de Primeros Auxilios Blanco', '731', 1, 'botiquinBlanco.png', 1),
-  (4,'Botiquin de Primeros Auxilios Militar', '6969', 4, 'botiquinMilitar.png', 1);
-SET IDENTITY_INSERT productos OFF
+(1,'angel', 'angeltovar308@gmail.com', 'sha256$5DGfv5cgFrKbMZz3$52389e87feb6e1a17cad14d8fe8fcef25bbecb0564c6a7ec4752e99f55328d79',1,1),
+(2,'Jose', 'angro1212@gmail.com', 'sha256$6j2avdMEX7UgH3HT$a9ea793320d38ead008540397c27054079389b76e12ab9b99da9568af83b5e53',1,2),
+(3,'pedro', '3@gmail.com', 'sha256$ERUhmMIzpUKtOSw4$eddbb4db44c30094412ebfebdfe42db31de476ae19d75d41193bf281325048a0',1,3);
+SET IDENTITY_INSERT [user] OFF
 
 -- Insertar datos en la tabla material_usado
 INSERT INTO material_usado (materialUsadoID, telaUsada, cantidadTela, hiloUsado, cierreUsado)
@@ -184,6 +181,18 @@ VALUES
     (3, 'Botiquin Blanco', 3),
     (4, 'Botiquin Militar', 4),
     (5, 'Botiquin Mezclilla', 5);
+
+-- Insertar datos en la tabla productos
+SET IDENTITY_INSERT productos ON
+INSERT INTO productos (idProducto,nombre, precio, tipoProductoID, image_name, estatus)
+VALUES
+  (1,'Botiquin de Primeros Auxilios Rojo', '514', 1, 'descargar_4.png', 1),
+  (2,'Botiquin de Primeros Auxilios Azul', '698', 2, 'botiquinAzul.png', 1),
+  (3,'Botiquin de Primeros Auxilios Blanco', '731', 1, 'botiquinBlanco.png', 1),
+  (4,'Botiquin de Primeros Auxilios Militar', '6969', 4, 'botiquinMilitar.png', 1);
+SET IDENTITY_INSERT productos OFF
+
+
 
 -- Insertar datos en la tabla materiaPrima
 INSERT INTO materiaPrima (nombreMateriaPrima,image_name,metrosMateriaPrima) 
@@ -206,7 +215,6 @@ values
 	(5,'PEDIDO CANCELADO');
 SET IDENTITY_INSERT cat_Estatus OFF
 
-ALTER TABLE [user] ALTER COLUMN active TINYINT NOT NULL DEFAULT 1;
 ----------------------------------------------------------querys---------------------------------------------------------
 /*
 USE mena;
@@ -220,6 +228,8 @@ DROP TABLE materiaPrima;
 DROP TABLE compras;
 DROP TABLE detalleCompra;
 DROP TABLE cat_Estatus;
+DROP TABLE proovedores;
+DROP TABLE compraMateriaPrima;
 
 
 DROP VIEW v_tipo_producto;
@@ -240,6 +250,8 @@ select * from materiaPrima;
 select * from compras;
 select * from detalleCompra;
 select * from cat_Estatus;
+select * from proovedores;
+select * from compraMateriaPrima;
 
 
 select * from v_tipo_producto;
@@ -257,4 +269,3 @@ select * from v_detalle_compras_con_material;
 UPDATE [user]
 SET active = 1 WHERE id=6;
 */
-
