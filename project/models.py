@@ -58,6 +58,19 @@ class User(db.Model, UserMixin):
     confirmed_at = db.Column(db.DateTime(), default=datetime.utcnow)
     idrole = db.Column(db.Integer, db.ForeignKey('role.idrole'), nullable=False)
     role = db.relationship('Role')
+    domicilioId = db.Column(db.Integer, db.ForeignKey('domicilio.domicilioId'), nullable=False)
+
+class Domicilio(db.Model):
+    tablename = 'domicilio'
+    domicilioId = db.Column(db.Integer, primary_key=True)
+    estado = db.Column(db.String(255), nullable=False)
+    municipio = db.Column(db.String(255), nullable=False)
+    codigoPostal = db.Column(db.Integer, nullable=False)
+    colonia = db.Column(db.String(255), nullable=False)
+    calle = db.Column(db.String(255), nullable=False)
+    numeroInt = db.Column(db.Integer, nullable=False)
+    numeroExt = db.Column(db.Integer, nullable=True)
+    referencia = db.Column(db.String(255), nullable=False)
 
 
 
@@ -86,16 +99,6 @@ class DetalleCompra(db.Model):
     cantidad = db.Column(db.Integer(), nullable=False)
     costo = db.Column(db.Float(), nullable=False)
 
-# class Pedidos(db.Model):
-#     __tablename__ = 'v_detalle_compras'
-#     CompraId = db.Column(db.Integer(), primary_key=True)
-#     fechaCompra = db.Column(db.DateTime(), nullable=False)
-#     UsuarioID = db.Column(db.Integer(), nullable=False)
-#     UsuarioNombre = db.Column(db.String(255), nullable=False)
-#     ProductoNombre = db.Column(db.String(255), nullable=False)
-#     cantidad = db.Column(db.Integer(), nullable=False)
-#     costo = db.Column(db.Float(), nullable=False)
-#     subtotal = db.Column(db.Float(), nullable=False)
 
 class Pedidos(db.Model):
     __tablename__ = 'v_detalle_compras'

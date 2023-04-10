@@ -74,21 +74,27 @@
                     </div>
                     <div class="modal-body">
                         <div class="form-group">
-                          <label for="input-numero-tarjeta">Número de Tarjeta</label>
+                          <label for="input-numero-tarjeta">Número de Tarjeta:</label>
                           <input type="text" class="form-control" id="input-numero-tarjeta" maxlength="16" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                         </div>
                         <div class="form-row">
-                          <div class="form-group col-md-6">
-                            <label for="input-fecha-vencimiento-mes">Mes de Vencimiento</label>
+                          <div class="form-group col-md-4">
+                            <label for="input-fecha-vencimiento-mes">Mes de Vencimiento:</label>
                             <input type="text" class="form-control" id="input-fecha-vencimiento-mes" maxlength="2" placeholder="MM" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                           </div>
-                          <div class="form-group col-md-6">
-                            <label for="input-fecha-vencimiento-anio">Año de Vencimiento</label>
+                          <div class="form-group col-md-4">
+                            <label for="input-fecha-vencimiento-anio">Año de Vencimiento:</label>
                             <input type="text" class="form-control" id="input-fecha-vencimiento-anio" maxlength="2" placeholder="AA" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                          </div>
+                          <div class="form-group col-md-4">
+                            <label for="input-CVV">CVV:</label>
+                            <br>
+                            <br>
+                            <input type="text" class="form-control" id="input-CVV" maxlength="3" placeholder="cvv" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                           </div>
                         </div>
                         <div id="mensaje-error" class="text-danger"></div>
-                      </div>
+                    </div>
                     <div class="modal-footer">
                         <button class="btn btn-warning" type="button" data-dismiss="modal">
                             Cerrar

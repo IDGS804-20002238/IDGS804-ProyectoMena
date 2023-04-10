@@ -3,15 +3,16 @@ validar que no se puedan enviar valores nulos en la tarjeta
 
 Módulos del Sistema
 o Autenticación de Usuario--
-o Registro de Usuario--
+
 o Catálogo de Productos--
+o Registro de Usuario--
 o alta de productos--
 o carrito de compras-- 
+(agregar un nuevo modal para confirmar la direccion de envio)
 o Pedidos--
 o Módulo Informativo--
 o Materia Prima--
 o Proveedores--
-
 
 o alta de usuarios
 o Finanzas

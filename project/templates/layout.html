@@ -113,17 +113,19 @@
                 <a href="{{ url_for('materiaPrima.proovedores') }}">Proveedores</a>
               </li>
               {% endif %}
-            <li><a href="{{ url_for('main.contacto') }}">Contacto</a></li>
             {% if not current_user.is_authenticated %}
             <li><a href="{{ url_for('auth.login') }}">Acceder</a></li>
             <li><a href="{{ url_for('auth.register') }}">Registro</a></li>
-            {% endif %} {% if current_user.is_authenticated and
+            {% endif %} 
+            {% if current_user.is_authenticated and
             (current_user.idrole == 1 or current_user.idrole == 2 or
             current_user.idrole == 4 or current_user.idrole == 3) %}
             <li>
               <a href="{{ url_for('pedidos.verPedidos') }}">Mis Pedidos</a>
             </li>
-            {% endif %} {% if current_user.is_authenticated %}
+            <li><a href="{{ url_for('main.contacto') }}">Contacto</a></li>
+            {% endif %} 
+            {% if current_user.is_authenticated %}
             <li><a href="{{ url_for('auth.logout') }}">Salir</a></li>
             {% endif %}
           </ul>
@@ -331,7 +333,6 @@
         // Comprobar si la suma total es divisible por 10
         return suma % 10 === 0;
       }
-
       function validarFechaVencimiento(mes, anio) {
         // Obtener la fecha actual
         var fechaActual = new Date();
@@ -363,6 +364,9 @@
         var numeroTarjeta = $("#input-numero-tarjeta").val();
         var mes = parseInt($("#input-fecha-vencimiento-mes").val());
         var anio = parseInt($("#input-fecha-vencimiento-anio").val());
+        var cvv = $("#input-CVV").val();
+        console.log(cvv);
+        
         var mensajeError = "";
         var validado = true;
 
@@ -384,12 +388,20 @@
           $("#input-fecha-vencimiento-mes").css("border-color", "green");
           $("#input-fecha-vencimiento-anio").css("border-color", "green");
         }
+        if (cvv.length !== 3 || isNaN(cvv)) {
+          mensajeError += "Ingresa un CVV válido. ";
+          validado = false;
+          $("#input-CVV").css("border-color", "red");
+        } else {
+          $("#input-CVV").css("border-color", "green");
+        }
 
         $("#mensaje-error").text(mensajeError);
         if (validado == true) {
           $("#input-fecha-vencimiento-mes").prop("readonly", true);
           $("#input-fecha-vencimiento-anio").prop("readonly", true);
           $("#input-numero-tarjeta").prop("readonly", true);
+          $("#input-CVV").prop("readonly", true);
           $("#comprarBtn").show();
           $("#btnVerificarTarjeta").hide();
         } else {
@@ -735,6 +747,8 @@
               contentType: "application/json;charset=UTF-8",
               success: function (response) {
                 // Manejar la respuesta del servidor
+                console.log(response.message);
+                if (response.status == 'succes'){
                 Swal.fire({
                   icon: "success",
                   title: "Pedido Aceptado",
@@ -744,6 +758,41 @@
                     location.reload();
                   }
                 });
+                }
+                if (response.message == 'No hay suficiente tela para completar la compra'){
+                  Swal.fire({
+                    icon: "error",
+                    title: "No hay suficiente tela para aceptar el pedido",
+                    showConfirmButton: true,
+                  }).then((result) => {
+                    if (result.isConfirmed) {
+                      location.reload();
+                    }
+                  });
+                  }
+                  if (response.message == 'No hay suficiente hilo para completar la compra'){
+                    Swal.fire({
+                      icon: "error",
+                      title: "No hay suficiente hilo para aceptar el pedido",
+                      showConfirmButton: true,
+                    }).then((result) => {
+                      if (result.isConfirmed) {
+                        location.reload();
+                      }
+                    });
+                    }
+                    if (response.message == 'No hay suficiente cierre para completar la compra'){
+                      Swal.fire({
+                        icon: "error",
+                        title: "No hay suficiente cierre para aceptar el pedido",
+                        showConfirmButton: true,
+                      }).then((result) => {
+                        if (result.isConfirmed) {
+                          location.reload();
+                        }
+                      });
+                      }
+                
               },
               error: function (error) {
                 // Manejar el error
@@ -841,6 +890,9 @@
           idProovedor = ""
           var id = $(this).val();
           idProovedor += id
+          $("#btnComprarProducto").hide();
+          $(".pago").hide();
+          $(".cantidad").hide();
           $("#btnGuardarProovedores").hide();
           $("#btnActualizarProovedores").show();
           var data = JSON.stringify({
@@ -853,9 +905,10 @@
             type: "POST",
             contentType: "application/json;charset=UTF-8",
             success: function(data){
-              $("#proveedor").val(data.nombre);
-              $("#costxmetro").val(data.costoxmetro);
+              $("#proveedor").val(data.nombre).prop("readonly", false);
+              $("#costxmetro").val(data.costoxmetro).prop("readonly", false);
               $("#materiaPrima").val(data.materiaPrima);
+              $("#materiaPrima").prop("disabled", false).selectpicker('refresh');
 
             }
           });
@@ -941,6 +994,7 @@
           var id = $(this).val();
           idProovedor += id
           $("#btnGuardarProovedores").hide();
+          $("#btnActualizarProovedores").hide();
           $("#btnComprarProducto").show();
           $(".pago").show();
           $(".cantidad").show();
@@ -1102,6 +1156,133 @@
 
 
         //-----------------------------------------fin Proovedores---------------------------------------------------
+
+
+        //-----------------------------------------Inicio Registro---------------------------------------------------
+        
+        $("#btnRegistrar").click(function(){
+          event.preventDefault();
+          var correo = $("#email").val().trim();
+          var nombre = $("#nombre").val().trim();
+          var contraseña = $("#password").val().trim();
+          var estado = $("#estado").val().trim();
+          var municipio = $("#municipio").val().trim();
+          var cp = $("#codigoPostal").val().trim();
+          var colonia = $("#colonia").val().trim();
+          var calle = $("#calle").val().trim();
+          var numeroInt = $("#numeroInt").val().trim();
+          var numeroExt = $("#numeroExt").val().trim();
+          var ref = $("#referencia").val().trim();
+          var mensajeError = "Ingresa datos faltantes";
+          var validado = true;
+
+          var data = JSON.stringify({
+            email: correo,
+            name: nombre,
+            password: contraseña,
+            estado:estado,
+            municipio:municipio,
+            codigoPostal:cp,
+            colonia:colonia,
+            calle:calle,
+            numeroInt:numeroInt,
+            numeroExt:numeroExt,
+            referencia:ref
+          });
+
+
+          // Verifica que los campos requeridos no estén vacíos o llenos de espacios
+          if (correo == ''){
+            validado = false;
+            $("#email").css("border-color", "red");
+          }
+          if (nombre == ''){
+            validado = false;
+            $("#nombre").css("border-color", "red");
+          }
+          if (contraseña == ''){
+            validado = false;
+            $("#password").css("border-color", "red");
+          }
+          if (estado == ''){
+            validado = false;
+            $("#estado").css("border-color", "red");
+          }
+          if (municipio == ''){
+            validado = false;
+            $("#municipio").css("border-color", "red");
+          }
+          if (cp == ''){
+            validado = false;
+          
+            $("#codigoPostal").css("border-color", "red");
+          }
+          if (colonia == ''){
+            validado = false;
+            $("#colonia").css("border-color", "red");
+          }
+          if (calle == ''){
+            validado = false;
+            $("#calle").css("border-color", "red");
+          }
+          if (numeroInt == ''){
+            validado = false;
+          
+            $("#numeroInt").css("border-color", "red");
+          }
+          if (ref == ''){
+              validado = false;
+              $("#referencia").css("border-color", "red");
+          }
+          $("#mensaje-error").text(mensajeError);
+          if (validado == true){
+            $.ajax({
+              type: "POST",
+              url: "/security/registerU",
+              data: data,
+              contentType: "application/json;charset=UTF-8",
+              success: function (response) {
+                console.log(response.status);
+                // Manejar la respuesta del servidor
+              if (response.status == 'success'){
+                Swal.fire({
+                  icon: "success",
+                  title: "Registro correcto!",
+                  text: "Dirigete a la pestaña de inicio de sesión",
+                  showConfirmButton: true,
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    location.reload();
+                  }
+                  else {
+                    location.reload();
+                  }
+                });
+              }
+              if (response.status == 'error'){
+                Swal.fire({
+                  icon: "error",
+                  title: "Oops...",
+                  text: "El correo ya está registrado, usa otro",
+                });
+              }
+              },
+              error: function (error) {
+                // Manejar el error
+                Swal.fire({
+                  icon: "error",
+                  title: "Oops...",
+                  text: "Algo salió mal!",
+                });
+              },
+            });
+          }
+
+        });
+
+
+        //-----------------------------------------fin Registro---------------------------------------------------
+
 
 
 

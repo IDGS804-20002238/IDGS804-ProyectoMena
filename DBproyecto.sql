@@ -35,7 +35,17 @@ CREATE TABLE role (
   name varchar(80) DEFAULT NULL,
   description varchar(255) DEFAULT NULL
 );
-
+CREATE TABLE domicilio(
+	domicilioId int NOT NULL PRIMARY KEY IDENTITY(1,1),
+	estado varchar(255) NOT NULL,
+	municipio varchar(255) NOT NULL,
+	codigoPostal int NOT NULL,
+	colonia varchar(255) NOT NULL,
+	calle varchar(255) NOT NULL,
+	numeroInt int NOT NULL,
+	numeroExt int DEFAULT NULL,
+	referencia varchar(255) NOT NULL
+);
 CREATE TABLE [user] (
   id int NOT NULL PRIMARY KEY IDENTITY(1,1),
   name varchar(50) NOT NULL,
@@ -45,8 +55,11 @@ CREATE TABLE [user] (
   confirmed_at datetime DEFAULT GETDATE(),
   idrole INT not null default 4,
   UNIQUE (email),
+  domicilioId int NOT NULL,
+  CONSTRAINT fk_domiclio_id FOREIGN KEY (domicilioId) REFERENCES domicilio(domicilioId),
   CONSTRAINT fk_rol_id FOREIGN KEY (idrole) REFERENCES role(idrole)
 );
+
 CREATE TABLE compras (
   idCompra int NOT NULL PRIMARY KEY IDENTITY(1,1),
   fechaCompra datetime NOT NULL,
@@ -112,14 +125,6 @@ INNER JOIN cat_Estatus e ON c.estatus = e.estatus
 WITH CHECK OPTION;
 
 
-
-
-CREATE VIEW v_roles_users AS
-SELECT u.id AS userId, u.name AS userName, r.id AS roleId, r.name AS roleName
-FROM roles_users ru
-INNER JOIN [user] u ON ru.userId = u.id
-INNER JOIN role r ON ru.roleId = r.id;
-
 CREATE VIEW v_compras_estatus AS
 SELECT c.idCompra, c.fechaCompra, c.id,u.name as userName, c.subtotal, e.descripcionEstatus
 FROM compras c
@@ -156,12 +161,20 @@ INSERT INTO role (idrole, name, description) VALUES
 (4, 'Cliente', 'Cliente de la empresa');
 SET IDENTITY_INSERT role OFF
 
-SET IDENTITY_INSERT [user] ON
-INSERT INTO [user] (id, name, [email], [password], active, idrole) 
+SET IDENTITY_INSERT domicilio ON
+INSERT INTO domicilio (domicilioId,estado,municipio,codigoPostal,colonia,calle,numeroInt,referencia)
 VALUES
-(1,'angel', 'angeltovar308@gmail.com', 'sha256$5DGfv5cgFrKbMZz3$52389e87feb6e1a17cad14d8fe8fcef25bbecb0564c6a7ec4752e99f55328d79',1,1),
-(2,'Jose', 'angro1212@gmail.com', 'sha256$6j2avdMEX7UgH3HT$a9ea793320d38ead008540397c27054079389b76e12ab9b99da9568af83b5e53',1,2),
-(3,'pedro', '3@gmail.com', 'sha256$ERUhmMIzpUKtOSw4$eddbb4db44c30094412ebfebdfe42db31de476ae19d75d41193bf281325048a0',1,3);
+(1,'guanajuato','leon','37570','Granjeno Plus','Granja eva','114','casa dos pisos porton negro'),
+(2,'guanajuato','leon','37570','Granjeno Plus','Granja Norma','232','casa roja'),
+(3,'guanajuato','leon','37570','Granjeno Plus','Granja Martha','452','casa verde con reja negra');
+SET IDENTITY_INSERT domicilio OFF
+
+SET IDENTITY_INSERT [user] ON
+INSERT INTO [user] (id, name, [email], [password], active, idrole, domicilioId) 
+VALUES
+(1,'angel', 'angeltovar308@gmail.com', 'sha256$5DGfv5cgFrKbMZz3$52389e87feb6e1a17cad14d8fe8fcef25bbecb0564c6a7ec4752e99f55328d79',1,1,1),
+(2,'Jose', 'angro1212@gmail.com', 'sha256$6j2avdMEX7UgH3HT$a9ea793320d38ead008540397c27054079389b76e12ab9b99da9568af83b5e53',1,2,2),
+(3,'pedro', '3@gmail.com', 'sha256$ERUhmMIzpUKtOSw4$eddbb4db44c30094412ebfebdfe42db31de476ae19d75d41193bf281325048a0',1,3,3);
 SET IDENTITY_INSERT [user] OFF
 
 -- Insertar datos en la tabla material_usado
@@ -219,6 +232,7 @@ SET IDENTITY_INSERT cat_Estatus OFF
 /*
 USE mena;
 DROP TABLE [user];
+DROP TABLE domicilio;
 DROP TABLE role;
 DROP TABLE roles_users;
 DROP TABLE productos;
@@ -242,6 +256,7 @@ DROP VIEW v_detalle_compras_con_material;
 
 
 select * from [user];
+select * from domicilio;
 select * from role;
 select * from productos;
 select * from material_usado;
@@ -252,6 +267,7 @@ select * from detalleCompra;
 select * from cat_Estatus;
 select * from proovedores;
 select * from compraMateriaPrima;
+
 
 
 select * from v_tipo_producto;
@@ -269,3 +285,5 @@ select * from v_detalle_compras_con_material;
 UPDATE [user]
 SET active = 1 WHERE id=6;
 */
+UPDATE materiaPrima
+SET metrosMateriaPrima = 1000 WHERE materiaPrimaId=1;
