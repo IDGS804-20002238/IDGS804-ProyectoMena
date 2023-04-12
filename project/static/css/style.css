@@ -1829,7 +1829,7 @@ section {
 
 .total-container {
   margin-top: 20px;
-  padding-left: 60%;
+  padding-right: 10%;
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -1841,6 +1841,15 @@ label {
 }
 
 .subtotal {
+  border: none;
+  border-bottom: 2px solid gray;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: right;
+  width: 100px;
+}
+
+.cantidadBotiquines {
   border: none;
   border-bottom: 2px solid gray;
   font-size: 16px;
@@ -1884,3 +1893,58 @@ h1 {
   letter-spacing: 2px;
 }
 
+/* Estilos para el tiempo de entrega */
+.entrega p {
+  display: inline-block;
+  margin-bottom: 10px;
+  font-weight: bold;
+  font-size: 18px;
+  margin-right: 10px;
+}
+
+.entrega span {
+  display: inline-block;
+  padding: 10px;
+  border: 2px solid #007bff;
+  border-radius: 5px;
+  font-size: 18px;
+  color: #007bff;
+}
+
+/*estilos para la validacion */
+.my-custom-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 50px 0;
+}
+
+#validarH1, #comprarH2 {
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  text-align: center;
+}
+
+#validarH1 h1, #comprarH2 h1, #comprarH2 h2 {
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+#validarDatos, #comprarBtn {
+  font-size: 20px;
+  padding: 10px 20px;
+  border-radius: 5px;
+  margin-top: 20px;
+}
+
+#comprarBtn {
+  background-color: #28a745;
+  border-color: #28a745;
+}
+
+#mensaje-errorCC, #mensaje-error {
+  margin-top: 20px;
+  font-size: 20px;
+  text-align: center;
+}

@@ -57,6 +57,7 @@ class User(db.Model, UserMixin):
     active = db.Column(db.Boolean(), default=True)
     confirmed_at = db.Column(db.DateTime(), default=datetime.utcnow)
     idrole = db.Column(db.Integer, db.ForeignKey('role.idrole'), nullable=False)
+
     role = db.relationship('Role')
     domicilioId = db.Column(db.Integer, db.ForeignKey('domicilio.domicilioId'), nullable=False)
 
@@ -68,8 +69,8 @@ class Domicilio(db.Model):
     codigoPostal = db.Column(db.Integer, nullable=False)
     colonia = db.Column(db.String(255), nullable=False)
     calle = db.Column(db.String(255), nullable=False)
-    numeroInt = db.Column(db.Integer, nullable=False)
-    numeroExt = db.Column(db.Integer, nullable=True)
+    numeroInt = db.Column(db.Integer, nullable=True)
+    numeroExt = db.Column(db.Integer, nullable=False)
     referencia = db.Column(db.String(255), nullable=False)
 
 
@@ -87,7 +88,16 @@ class Compra(db.Model):
     idCompra = db.Column(db.Integer(), primary_key=True)
     fechaCompra = db.Column(db.DateTime(), nullable=False)
     id = db.Column(db.Integer(), nullable=False)
+    estado = db.Column(db.String(255), nullable=False)
+    municipio = db.Column(db.String(255), nullable=False)
+    codigoPostal = db.Column(db.Integer, nullable=False)
+    colonia = db.Column(db.String(255), nullable=False)
+    calle = db.Column(db.String(255), nullable=False)
+    numeroInt = db.Column(db.Integer, nullable=True)
+    numeroExt = db.Column(db.Integer, nullable=False)
+    referencia = db.Column(db.String(255), nullable=False)
     subtotal = db.Column(db.Integer())
+    totalBotiquines = db.Column(db.Integer())
     estatus = db.Column(db.Integer(), default=1)
     detalle_compra = db.relationship('DetalleCompra', backref='compra')
 
@@ -141,6 +151,12 @@ class descontarMaterial(db.Model):
     cantidadTela = db.Column(db.Integer)
     hiloUsado = db.Column(db.Integer)
     cierreUsado = db.Column(db.Integer)
+    carroUsado = db.Column(db.Integer)
+    reflejanteUsado = db.Column(db.Integer)
+    argollaUsada = db.Column(db.Integer)
+    bandolaUsada = db.Column(db.Integer)
+    hombreraUsada = db.Column(db.Integer)
+
 
 class Proveedor(db.Model):
     __tablename__ = 'proovedores'
@@ -157,6 +173,24 @@ class CompraMateriaPrima(db.Model):
     cantidadEnMetros = db.Column(db.Integer, nullable=False)
     pagoTotal = db.Column(db.Integer, nullable=False)
     confirmed_at = db.Column(db.DateTime, nullable=False, default=db.func.current_timestamp())
+
+
+class v_user_con_domicilio(db.Model):
+    __tablename__ = 'v_user_con_domicilio'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False)
+    email = db.Column(db.String(255), unique=True)
+    estado = db.Column(db.String(255), nullable=False)
+    municipio = db.Column(db.String(255), nullable=False)
+    codigoPostal = db.Column(db.Integer, nullable=False)
+    colonia = db.Column(db.String(255), nullable=False)
+    calle = db.Column(db.String(255), nullable=False)
+    numeroExt = db.Column(db.Integer, nullable=False)
+    numeroInt = db.Column(db.Integer)
+    referencia = db.Column(db.String(255), nullable=False)
+
+
 
 
 

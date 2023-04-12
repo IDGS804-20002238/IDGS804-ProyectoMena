@@ -8,7 +8,6 @@ o Catálogo de Productos--
 o Registro de Usuario--
 o alta de productos--
 o carrito de compras-- 
-(agregar un nuevo modal para confirmar la direccion de envio)
 o Pedidos--
 o Módulo Informativo--
 o Materia Prima--

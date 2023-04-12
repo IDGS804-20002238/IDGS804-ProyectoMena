@@ -34,26 +34,27 @@
                     <div class="modal-body">
                         <table class="table table-striped">
                             <thead>
-                                
+    
                             </thead>
                             <tbody id="carritoBody">
                             </tbody>
                         </table>
                         <div class="total-container">
-                            <label for="total">Subtotal:</label>
-                            $<input type="text" class="subtotal"id="subtotal" readonly>
+                            <label for="cantidadBotiquines" style="margin-bottom: 8px;">Botiquines:</label><br>
+                            <input type="text" class="cantidadBotiquines" id="cantidadBotiquines" readonly style="margin-right: 18%;">
+                            <label for="total" style="margin-bottom: 8px;">Subtotal:</label>
+                            $<input type="text" class="subtotal" id="subtotal" readonly style="margin-bottom: 8px;">
                         </div>
-                        <div class="alert alert-success" id="carritoAlert" style="display:none">
-                            <h6><strong>Tu pedido se ha realizado correctamente</strong></h6>
-                        </div>
+                          
+                            
+                        
                     </div>
                     <div class="modal-footer">
                         <button class="btn btn-warning" type="button" data-dismiss="modal">
                             Cerrar
                         </button>
-                        <button class="btn btn-success" type="button" id="btnPago">
-                            Comprar
-                        </button>
+                        <div class="row d-flex justify-content-center mt-200"> <button type="button" class="btn btn-success"
+                                data-toggle="modal" data-target="#exampleModal" id="btnPago">Comprar</button> </div>
                     </div>
                 </div>
             </div>
@@ -61,8 +62,128 @@
     </section>
     <!-- termino carrito de comras -->
 
+
+    <!-- Inicio modal smartwizard -->
+    <div class="container">
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                <div class="modal-content" style="height: 500px; overflow-y: auto;">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Confirmación del pedido</h5> <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="cerrar-modal">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="smartwizard">
+                            <ul>
+                                <li><a href="#step-1">Paso 1<br /><small>Información de envio</small></a></li>
+                                <li><a href="#step-2">Paso 2<br /><small>Información de pago</small></a></li>
+                                <li><a href="#step-3">Paso 3<br /><small>Tiempo de entrega</small></a></li>
+                                <li><a href="#step-4">Paso 4<br /><small>Confirmar pedido</small></a></li>
+                            </ul>
+                            <div>
+                                <div id="step-1">
+                                    <div class="row">
+                                        <div class="col-lg-8 mt-lg-0 mx-auto">
+                                            <form>
+                                                <div class="row">
+                                                    <div class="col-md-6 form-group">
+                                                        <label for="estado">Estado:</label>
+                                                        <input type="text" class="form-control" name="estado" id="estado" placeholder="Ingresa tu estado" required>
+                                                    </div>
+                                                    <div class="col-md-6 form-group">
+                                                        <label for="municipio">Municipio:</label>
+                                                        <input type="text" class="form-control" name="municipio" id="municipio" placeholder="Ingresa tu municipio" required>
+                                                    </div>
+                                                    <div class="col-md-6 form-group">
+                                                        <label for="codigoPostal">Código Postal:</label>
+                                                        <input type="number" class="form-control" name="codigoPostal" id="codigoPostal" placeholder="Ingresa tu código postal" required>
+                                                    </div>
+                                                    <div class="col-md-6 form-group">
+                                                        <label for="colonia">Colonia:</label>
+                                                        <input type="text" class="form-control" name="colonia" id="colonia" placeholder="Ingresa tu colonia" required>
+                                                    </div>
+                                                    <div class="col-md-6 form-group">
+                                                        <label for="calle">Calle:</label>
+                                                        <input type="text" class="form-control" name="calle" id="calle" placeholder="Ingresa tu calle" required>
+                                                    </div>
+                                                    <div class="col-md-6 form-group">
+                                                        <label for="numeroExt">Número Exterior:</label>
+                                                        <input type="number" class="form-control" name="numeroExt" id="numeroExt" placeholder="Ingresa tu número exterior" required>
+                                                    </div>
+                                                    <div class="col-md-6 form-group">
+                                                        <label for="numeroInt">Número Interior (opcional):</label>
+                                                        <input type="number" class="form-control" name="numeroInt" id="numeroInt" placeholder="Ingresa tu número interior" >
+                                                    </div>
+                                                    <div class="col-md-12 form-group">
+                                                        <label for="referencia">Referencia:</label>
+                                                        <input type="text" class="form-control" name="referencia" id="referencia" placeholder="Ingresa una referencia para ubicar tu domicilio" required>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="step-2">
+                                    <div class="form-group">
+                                        <label for="input-numero-tarjeta">Número de Tarjeta:</label>
+                                        <input type="text" class="form-control" id="input-numero-tarjeta" maxlength="16" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                                      </div>
+                                      <div class="form-row">
+                                        <div class="form-group col-md-4">
+                                          <label for="input-fecha-vencimiento-mes">Mes de Vencimiento:</label>
+                                          <input type="number" class="form-control" id="input-fecha-vencimiento-mes" maxlength="2" placeholder="MM" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                          <label for="input-fecha-vencimiento-anio">Año de Vencimiento:</label>
+                                          <input type="number" class="form-control" id="input-fecha-vencimiento-anio" maxlength="2" placeholder="AA" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                          <label for="input-CVV">CVV:</label>
+                                          <br>
+                                          <input type="text" class="form-control" id="input-CVV" maxlength="3" placeholder="cvv" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                                        </div>
+                                      </div>
+                                </div>
+                                <div id="step-3" class="">
+                                    <h1>¡Entrega rápida y confiable!</h1>
+                                    <p>En nuestra tienda, sabemos que el tiempo de entrega es importante para ti. Por eso, nos esforzamos por hacer que el proceso de envío sea lo más rápido y eficiente posible.</p>
+                                    <p>Ten en cuenta que el tiempo de entrega puede variar según la cantidad de pedidos que tengamos pendientes. Sin embargo, siempre hacemos todo lo posible para cumplir con nuestros plazos de entrega estimados.</p>
+                                    <p>Recuerda que los días de espera que indicamos son aproximados y se refieren a días hábiles. Si tienes alguna pregunta o necesitas más información sobre el tiempo de entrega, no dudes en contactarnos.</p>
+                                    <div class="entrega">
+                                    <p>Días para la entrega:</p>
+                                    <span id="tiempodeentrega"></span>
+                                    </div>
+                                    
+                                </div>
+                                <div id="step-4" class="">
+                                    <div class="my-custom-row row">
+                                        <div id="validarH1">
+                                          <h1>Validar datos ingresados</h1>
+                                          <button class="btn btn-primary" id="validarDatos">validar</button> 
+                                        </div>
+                                        <div id="comprarH2">
+                                          <h1>Datos validados</h1>
+                                          <h2>Realizar compra?</h2>
+                                          <button class="btn btn-success" id="comprarBtn">Comprar</button>  
+                                        </div>                            
+                                    </div>
+                                      <div id="mensaje-errorCC" class="text-danger"></div>
+                                      <div id="mensaje-error" class="text-danger"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Fin modal smartwizard -->   
+
+
     <!-- inicio tarjeta -->
-    <section>
+    <!-- <section>
         <div class="modal fade" id="modalTarjeta" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -111,7 +232,7 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section> -->
 
 
 

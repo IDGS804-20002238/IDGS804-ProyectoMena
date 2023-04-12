@@ -65,7 +65,6 @@ def actualzar_proovedor():
             "nombre": proveedor.nombre,
             "materiaPrima": proveedor.materiaPrima,
             "costoxmetro":proveedor.costoxmetro
-            # Agrega aquí los campos que quieras devolver
         }
         
         return jsonify(datos_proveedor)

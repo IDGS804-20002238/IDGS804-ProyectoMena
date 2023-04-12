@@ -10,8 +10,14 @@ CREATE TABLE material_usado(
   telaUsada varchar(50) NOT NULL,
   cantidadTela int not null,
   hiloUsado int not null,
-  cierreUsado int not null
+  cierreUsado int not null,
+  carroUsado int NOT NULL,
+  reflejanteUsado int NOT NULL,
+  argollaUsada int NOT NULL,
+  bandolaUsada int NOT NULL,
+  hombreraUsada int NOT NULL,
 );
+
 
 CREATE TABLE tipo_producto(
   tipoProductoID int PRIMARY KEY  not null,
@@ -42,8 +48,8 @@ CREATE TABLE domicilio(
 	codigoPostal int NOT NULL,
 	colonia varchar(255) NOT NULL,
 	calle varchar(255) NOT NULL,
-	numeroInt int NOT NULL,
-	numeroExt int DEFAULT NULL,
+	numeroExt int NOT NULL,
+	numeroInt int DEFAULT NULL,
 	referencia varchar(255) NOT NULL
 );
 CREATE TABLE [user] (
@@ -64,7 +70,16 @@ CREATE TABLE compras (
   idCompra int NOT NULL PRIMARY KEY IDENTITY(1,1),
   fechaCompra datetime NOT NULL,
   id int NOT NULL,
+  estado varchar(255) NOT NULL,
+  municipio varchar(255) NOT NULL,
+  codigoPostal int NOT NULL,
+  colonia varchar(255) NOT NULL,
+  calle varchar(255) NOT NULL,
+  numeroExt int NOT NULL,
+  numeroInt int DEFAULT NULL,
+  referencia varchar(255) NOT NULL,
   subtotal int NOT NULL,
+  totalBotiquines int NOT NULL,
   estatus int default 1
   CONSTRAINT fk_compras_user FOREIGN KEY (id) REFERENCES [user](id)
 );
@@ -150,6 +165,10 @@ INNER JOIN cat_Estatus e ON c.estatus = e.estatus
 LEFT JOIN tipo_producto tp ON p.tipoProductoID = tp.tipoProductoID
 LEFT JOIN material_usado mu ON tp.materialUsadoID = mu.materialUsadoID;
 
+CREATE VIEW v_user_con_domicilio AS
+SELECT u.id, u.name, u.email, d.estado, d.municipio, d.codigoPostal, d.colonia, d.calle, d.numeroExt, d.numeroInt, d.referencia
+FROM [user] u
+INNER JOIN domicilio d ON u.domicilioId = d.domicilioId;
 
 
 ----------------------------------------------------------INSERTS---------------------------------------------------------
@@ -162,7 +181,7 @@ INSERT INTO role (idrole, name, description) VALUES
 SET IDENTITY_INSERT role OFF
 
 SET IDENTITY_INSERT domicilio ON
-INSERT INTO domicilio (domicilioId,estado,municipio,codigoPostal,colonia,calle,numeroInt,referencia)
+INSERT INTO domicilio (domicilioId,estado,municipio,codigoPostal,colonia,calle,numeroExt,referencia)
 VALUES
 (1,'guanajuato','leon','37570','Granjeno Plus','Granja eva','114','casa dos pisos porton negro'),
 (2,'guanajuato','leon','37570','Granjeno Plus','Granja Norma','232','casa roja'),
@@ -178,13 +197,13 @@ VALUES
 SET IDENTITY_INSERT [user] OFF
 
 -- Insertar datos en la tabla material_usado
-INSERT INTO material_usado (materialUsadoID, telaUsada, cantidadTela, hiloUsado, cierreUsado)
+INSERT INTO material_usado (materialUsadoID, telaUsada, cantidadTela, hiloUsado, cierreUsado,carroUsado,reflejanteUsado,argollaUsada,bandolaUsada,hombreraUsada)
 VALUES 
-    (1, 'Roja', 5, 1, 1),
-    (2, 'Azul', 5, 1, 1),
-    (3, 'Blanco', 5, 1, 1),
-    (4, 'Militar', 5, 1, 1),
-    (5, 'Mezclilla', 5, 1, 1);
+    (1, 'Roja', 2, 100, 2,6,1,2,1,1),
+    (2, 'Azul', 2, 100, 2,6,1,2,1,1),
+    (3, 'Blanco', 2, 100, 2,6,1,2,1,1),
+    (4, 'Militar', 2, 100, 2,6,1,2,1,1),
+    (5, 'Mezclilla', 2, 100, 2,6,1,2,1,1);
 
 -- Insertar datos en la tabla tipo_producto
 INSERT INTO tipo_producto (tipoProductoID, nombreProducto, materialUsadoID)
@@ -201,7 +220,7 @@ INSERT INTO productos (idProducto,nombre, precio, tipoProductoID, image_name, es
 VALUES
   (1,'Botiquin de Primeros Auxilios Rojo', '514', 1, 'descargar_4.png', 1),
   (2,'Botiquin de Primeros Auxilios Azul', '698', 2, 'botiquinAzul.png', 1),
-  (3,'Botiquin de Primeros Auxilios Blanco', '731', 1, 'botiquinBlanco.png', 1),
+  (3,'Botiquin de Primeros Auxilios Blanco', '731', 3, 'botiquinBlanco.png', 1),
   (4,'Botiquin de Primeros Auxilios Militar', '6969', 4, 'botiquinMilitar.png', 1);
 SET IDENTITY_INSERT productos OFF
 
@@ -210,19 +229,24 @@ SET IDENTITY_INSERT productos OFF
 -- Insertar datos en la tabla materiaPrima
 INSERT INTO materiaPrima (nombreMateriaPrima,image_name,metrosMateriaPrima) 
 VALUES 
-	('Roja','telaRoja.png',1000),
-	('Azul','telaAzul.png',1000),
-	('Blanco','telaBlanca.png',1000),
-	('Militar','telaMilitar.png',1000),
-	('Mezclilla','telaMezclilla.png',1000),
-	('Hilo','Hilo.png',100),
-	('Cierre','Cierre.png',100);
+	('Roja','telaRoja.png',200),
+	('Azul','telaAzul.png',200),
+	('Blanco','telaBlanca.png',200),
+	('Militar','telaMilitar.png',200),
+	('Mezclilla','telaMezclilla.png',200),
+	('Hilo','Hilo.png',1000),
+	('Cierre','Cierre.png',100),
+	('Carros','carros.png',100),
+	('Reflejante','reflejante.png',100),
+	('Argollas','argolla.png',100),
+	('Bandola','bandola.png',100),
+	('Hombrera','hombrera.png',100);
 
 SET IDENTITY_INSERT cat_Estatus ON
 INSERT INTO cat_Estatus (estatus,descripcionEstatus) 
 values
 	(1,'PEDIDO CREADO'),
-	(2,'PEDIDO ACEPTADO'),
+	(2,'ELABORANDO PEDIDO'),
 	(3,'PEDIDO ENVIADO'),
 	(4,'PEDIDO ENTREGADO'),
 	(5,'PEDIDO CANCELADO');
@@ -252,6 +276,7 @@ DROP VIEW v_detalle_compras;
 DROP VIEW v_roles_users;
 DROP VIEW v_compras_estatus;
 DROP VIEW v_detalle_compras_con_material;
+DROP VIEW v_user_con_domicilio;
 
 
 
@@ -276,6 +301,7 @@ select * from v_detalle_compras;
 select * from v_roles_users;
 select * from v_compras_estatus;
 select * from v_detalle_compras_con_material;
+select * from v_user_con_domicilio;
 
 
 
@@ -287,3 +313,5 @@ SET active = 1 WHERE id=6;
 */
 UPDATE materiaPrima
 SET metrosMateriaPrima = 1000 WHERE materiaPrimaId=1;
+
+
