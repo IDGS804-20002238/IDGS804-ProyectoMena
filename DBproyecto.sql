@@ -141,10 +141,16 @@ WITH CHECK OPTION;
 
 
 CREATE VIEW v_compras_estatus AS
-SELECT c.idCompra, c.fechaCompra, c.id,u.name as userName, c.subtotal, e.descripcionEstatus
+SELECT c.idCompra, c.fechaCompra, c.id,u.name as userName, c.subtotal, e.descripcionEstatus,
+concat(compras.estado, ', ', compras.municipio, '. ', compras.colonia, '. ', compras.codigoPostal, '. ',
+compras.calle, ' ', compras.numeroExt,
+CASE WHEN compras.numeroInt <> '0' THEN concat(' ', compras.numeroInt) ELSE '' END,
+'. ', compras.referencia) as domicilio
 FROM compras c
 INNER JOIN cat_Estatus e ON c.estatus = e.estatus
-INNER JOIN [user] u ON c.id = u.id;
+INNER JOIN [user] u ON c.id = u.id
+INNER JOIN compras ON c.idCompra = compras.idCompra;
+
 
 
 CREATE VIEW v_detalle_compras_con_material AS
@@ -245,7 +251,7 @@ VALUES
 SET IDENTITY_INSERT cat_Estatus ON
 INSERT INTO cat_Estatus (estatus,descripcionEstatus) 
 values
-	(1,'PEDIDO CREADO'),
+	(1,'EN ESPERA DE ELABORACION'),
 	(2,'ELABORANDO PEDIDO'),
 	(3,'PEDIDO ENVIADO'),
 	(4,'PEDIDO ENTREGADO'),

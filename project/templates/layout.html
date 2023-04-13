@@ -282,6 +282,11 @@
             subtotal += productoSubtotal;
           }
         });
+        if (subtotal == 0){
+          $("#btnPago").hide();
+        }else{
+          $("#btnPago").show();
+        }
         return subtotal;
       }
       function calcularBotiquines() {
@@ -467,16 +472,6 @@
           location.reload();
         });
 //terminar
-        $(".cantidadBotiquines").change(function(){
-          var cantidadBotiquines = $("#cantidadBotiquines").val();
-          console.log(cantidadBotiquines);
-          
-          if (cantidadBotiquines == ''){
-            $("#btnPago").hide();
-          }else{
-            $("#btnPago").show();
-          }
-        })
 
         //---------------------------------------------jquery carrito----------------------------------------------------
         agregarEventosModalCarrito();
@@ -748,7 +743,6 @@
           $("#numeroInt").prop("readonly", true);
           $("#numeroExt").prop("readonly", true);
           $("#referencia").prop("readonly", true);
-          
         }
 
 
@@ -1525,10 +1519,10 @@
             validado = false;
             $("#calle").css("border-color", "red");
           }
-          if (numeroInt == ''){
+          if (numeroExt == ''){
             validado = false;
           
-            $("#numeroInt").css("border-color", "red");
+            $("#numeroExt").css("border-color", "red");
           }
           if (ref == ''){
               validado = false;

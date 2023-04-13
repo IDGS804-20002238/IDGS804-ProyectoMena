@@ -31,6 +31,7 @@
               <tr>
                 <th>Nombre Usuario</th>
                 <th>Estatus</th>
+                <th>Dirección de envio</th>
                 <th>Fecha de Compra</th>
                 <th>Subtotal</th>
                 <th>Acciones</th>
@@ -41,6 +42,7 @@
               <tr>
                 <td>{{ detalle.userName }}</td>
                 <td>{{ detalle.descripcionEstatus }}</td>
+                <td>{{ detalle.domicilio }}</td>
                 <td>{{ detalle.fechaCompra }}</td>
                 <td>${{ detalle.subtotal }}</td>
                 <td>
@@ -50,14 +52,14 @@
                     {% if detalle.descripcionEstatus == 'PEDIDO ENVIADO' and (current_user.idrole == 1 or current_user.idrole == 3) %}
                     <button class="btn btn-success btnEntregar" value="{{ detalle.idCompra }}" >Entregar Pedido</button>
                     {% endif %}
-                    {% if detalle.descripcionEstatus == 'PEDIDO ACEPTADO' and (current_user.idrole == 1 or current_user.idrole == 2) %}
+                    {% if detalle.descripcionEstatus == 'ELABORANDO PEDIDO' and (current_user.idrole == 1 or current_user.idrole == 2) %}
                       <button class="btn btn-success btnEnviar" value="{{ detalle.idCompra }}" >Enviar Pedido</button>
                     {% endif %}
-                    {% if detalle.descripcionEstatus == 'PEDIDO CREADO' and (current_user.idrole == 1 or current_user.idrole == 2) %}
-                      <button class="btn btn-success btnAceptar" value="{{ detalle.idCompra }}" >Aceptar Pedido</button>
+                    {% if detalle.descripcionEstatus == 'EN ESPERA DE ELABORACION' and (current_user.idrole == 1 or current_user.idrole == 2) %}
+                      <button class="btn btn-success btnAceptar" value="{{ detalle.idCompra }}" >Elaborar Pedido</button>
                     {% endif %}
-                    {% if detalle.descripcionEstatus != 'PEDIDO CANCELADO' and (current_user.idrole == 1 or current_user.idrole == 2 or current_user.idrole == 4) %}
-                    <button class="btn btn-danger btnCancelarPedido" value="{{ detalle.idCompra }}" >Cancelar</button>
+                    {% if detalle.descripcionEstatus == 'EN ESPERA DE ELABORACION' and (current_user.idrole == 1 or current_user.idrole == 2 or current_user.idrole == 4) %}
+                        <button class="btn btn-danger btnCancelarPedido" value="{{ detalle.idCompra }}">Cancelar</button>
                     {% endif %}
                 </td>
                 

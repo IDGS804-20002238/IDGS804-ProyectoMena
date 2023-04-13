@@ -125,13 +125,14 @@ class Pedidos(db.Model):
 
 
 class v_compras_estatus (db.Model):
-    __tablename__ = 'v_compras_estatus'
+    tablename = 'v_compras_estatus'
     idCompra = db.Column(db.Integer, primary_key=True)
     fechaCompra = db.Column(db.DateTime, nullable=False)
     id = db.Column(db.Integer, nullable=False)
     userName = db.Column(db.String(50), nullable=False)
     subtotal = db.Column(db.Float, nullable=False)
     descripcionEstatus = db.Column(db.String(255), nullable=False)
+    domicilio = db.Column(db.String(255), nullable=False)
 
 class descontarMaterial(db.Model):
     __tablename__ = 'v_detalle_compras_con_material'

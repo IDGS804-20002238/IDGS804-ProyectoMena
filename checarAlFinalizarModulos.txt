@@ -16,6 +16,9 @@ o Proveedores--
 o alta de usuarios
 o Finanzas
 
+que no se puedan realizar pedidos si no hay cosas en el carrito
+cambiar el diseño para que sea la empresa
+
 
 
 
