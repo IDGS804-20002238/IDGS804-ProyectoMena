@@ -162,7 +162,12 @@ SELECT dc.idDetalleCompra, c.idCompra AS CompraId, c.fechaCompra, u.id AS Usuari
        telaUsada, 
        mu.cantidadTela * dc.cantidad AS cantidadTela, 
        mu.hiloUsado * dc.cantidad AS hiloUsado, 
-       mu.cierreUsado * dc.cantidad AS cierreUsado
+       mu.cierreUsado * dc.cantidad AS cierreUsado,
+       mu.carroUsado * dc.cantidad AS carroUsado ,
+       mu.reflejanteUsado * dc.cantidad AS reflejanteUsado ,
+       mu.argollaUsada * dc.cantidad AS argollaUsada ,
+       mu.bandolaUsada * dc.cantidad AS bandolaUsada ,
+       mu.hombreraUsada * dc.cantidad AS hombreraUsada 
 FROM compras c
 INNER JOIN [user] u ON c.id = u.id
 INNER JOIN detalleCompra dc ON c.idCompra = dc.idCompra
@@ -205,29 +210,30 @@ SET IDENTITY_INSERT [user] OFF
 -- Insertar datos en la tabla material_usado
 INSERT INTO material_usado (materialUsadoID, telaUsada, cantidadTela, hiloUsado, cierreUsado,carroUsado,reflejanteUsado,argollaUsada,bandolaUsada,hombreraUsada)
 VALUES 
-    (1, 'Roja', 2, 100, 2,6,1,2,1,1),
-    (2, 'Azul', 2, 100, 2,6,1,2,1,1),
-    (3, 'Blanco', 2, 100, 2,6,1,2,1,1),
-    (4, 'Militar', 2, 100, 2,6,1,2,1,1),
-    (5, 'Mezclilla', 2, 100, 2,6,1,2,1,1);
+    (1, 'Roja', 2, 100, 3,6,1,2,1,1),
+    (2, 'Roja', 1, 60, 1,2,1,2,1,1),
+    (3, 'Roja', 2, 130, 2,5,1,2,1,1),
+    (4, 'Roja', 2, 170, 2,6,1,2,1,1),
+    (5, 'Roja', 3, 200, 3,10,2,2,1,1);
 
 -- Insertar datos en la tabla tipo_producto
 INSERT INTO tipo_producto (tipoProductoID, nombreProducto, materialUsadoID)
 VALUES 
-    (1, 'Botiquin Rojo', 1),
-    (2, 'Botiquin Azul', 2),
-    (3, 'Botiquin Blanco', 3),
-    (4, 'Botiquin Militar', 4),
-    (5, 'Botiquin Mezclilla', 5);
+    (1, 'Botiquin 4 bolsas', 1),
+    (2, 'Botiquin mini', 2),
+    (3, 'Botiquin 3 bolsas', 3),
+    (4, 'Botiquin 5 bolsas', 4),
+    (5, 'Botiquin para ambulancia', 5);
 
 -- Insertar datos en la tabla productos
 SET IDENTITY_INSERT productos ON
 INSERT INTO productos (idProducto,nombre, precio, tipoProductoID, image_name, estatus)
 VALUES
-  (1,'Botiquin de Primeros Auxilios Rojo', '514', 1, 'descargar_4.png', 1),
-  (2,'Botiquin de Primeros Auxilios Azul', '698', 2, 'botiquinAzul.png', 1),
-  (3,'Botiquin de Primeros Auxilios Blanco', '731', 3, 'botiquinBlanco.png', 1),
-  (4,'Botiquin de Primeros Auxilios Militar', '6969', 4, 'botiquinMilitar.png', 1);
+  (1,'Botiquin de Primeros Auxilios 4 bolsas', '514', 1, 'botiquin_4_bolsas.png', 1),
+  (2,'Botiquin de Primeros Auxilios mini', '698', 2, 'botiquin_mini.png', 1),
+  (3,'Botiquin de Primeros Auxilios 3 bolsas', '731', 3, 'botiquin_3_bolsas.png', 1),
+  (4,'Botiquin de Primeros Auxilios 5 bolsas', '800', 4, 'botiquin_5_bolsas.png', 1),
+  (5,'Botiquin de Primeros Auxilios Para Ambulancia', '696', 5, 'botiquin_ambulancia.png', 1);
 SET IDENTITY_INSERT productos OFF
 
 
@@ -236,11 +242,7 @@ SET IDENTITY_INSERT productos OFF
 INSERT INTO materiaPrima (nombreMateriaPrima,image_name,metrosMateriaPrima) 
 VALUES 
 	('Roja','telaRoja.png',200),
-	('Azul','telaAzul.png',200),
-	('Blanco','telaBlanca.png',200),
-	('Militar','telaMilitar.png',200),
-	('Mezclilla','telaMezclilla.png',200),
-	('Hilo','Hilo.png',1000),
+	('Hilo','Hilo.png',10000),
 	('Cierre','Cierre.png',100),
 	('Carros','carros.png',100),
 	('Reflejante','reflejante.png',100),
@@ -319,5 +321,7 @@ SET active = 1 WHERE id=6;
 */
 UPDATE materiaPrima
 SET metrosMateriaPrima = 1000 WHERE materiaPrimaId=1;
+
+
 
 
