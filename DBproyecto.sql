@@ -1,4 +1,12 @@
 USE mena;
+CREATE TABLE finanzas_mes (
+  id INT PRIMARY KEY IDENTITY(1,1),
+  mes INT NOT NULL,
+  anio INT NOT NULL,
+  ingresos DECIMAL(10, 2) NOT NULL,
+  gastos DECIMAL(10, 2) NOT NULL,
+  ganancias DECIMAL(10, 2) NOT NULL
+);
 
 
 CREATE TABLE cat_Estatus(
@@ -193,6 +201,54 @@ FROM [user] u
 JOIN role r ON u.idrole = r.idrole
 JOIN domicilio d ON u.domicilioId = d.domicilioId
 
+CREATE VIEW v_ingresos AS
+SELECT cm.idCompra, cm.totalBotiquines, cm.subtotal, cm.fechaCompra
+FROM compras cm
+WHERE MONTH(cm.fechaCompra) = MONTH(CONVERT(date, GETDATE())) AND YEAR(cm.fechaCompra) = YEAR(CONVERT(date, GETDATE()));
+
+CREATE VIEW v_gastos AS
+SELECT cm.compraMateriaPrimaID, cm.proovedoresId, p.nombre as proveedor, 
+       cm.cantidadEnMetros, cm.pagoTotal, cm.confirmed_at
+FROM compraMateriaPrima cm
+INNER JOIN proovedores p ON cm.proovedoresId = p.proovedoresId
+WHERE MONTH(cm.confirmed_at) = MONTH(CONVERT(date, GETDATE())) AND YEAR(cm.confirmed_at) = YEAR(CONVERT(date, GETDATE()));
+
+CREATE VIEW v_finanzas AS
+SELECT
+  SUM(cmp.pagoTotal) AS gastos,
+  SUM(c.subtotal) AS ingresos,
+  SUM(c.subtotal - cmp.pagoTotal) AS ganancias
+FROM
+  compraMateriaPrima cmp
+  JOIN compras c ON c.idCompra = cmp.compraMateriaPrimaID
+WHERE MONTH(c.fechaCompra) = MONTH(CONVERT(date, GETDATE())) AND YEAR(c.fechaCompra) = YEAR(CONVERT(date, GETDATE()));
+
+----------------------------------------------------------Eventos---------------------------------------------------------
+DROP EVENT IF EXISTS actualizar_finanzas_mes;
+
+CREATE EVENT `actualizar_finanzas_mes` 
+ON SCHEDULE
+  EVERY 1 MONTH STARTS DATE_FORMAT(DATE_ADD(NOW(), INTERVAL 1 MONTH), '%Y-%m-01 00:00:00')
+DO BEGIN
+  INSERT INTO finanzas_mes (mes, anio, ingresos, gastos, ganancias)
+  SELECT MONTH(NOW()), YEAR(NOW()), SUM(vi.subtotal), SUM(vg.pagoTotal), SUM(vi.subtotal - vg.pagoTotal)
+  FROM v_ingresos vi
+  JOIN v_gastos vg ON vi.idCompra = vg.compraMateriaPrimaID;
+END;
+
+DROP EVENT IF EXISTS actualizar_ventas_mes;
+
+CREATE EVENT `actualizar_ventas_mes` 
+ON SCHEDULE
+  EVERY 1 MONTH STARTS DATE_FORMAT(DATE_ADD(NOW(), INTERVAL 1 MONTH), '%Y-%m-01 00:00:00')
+DO BEGIN
+  INSERT INTO ventas_mes (mes, anio, cantidad_ventas, total_ventas)
+  SELECT MONTH(NOW()), YEAR(NOW()), COUNT(*) AS cantidad_ventas, SUM(total) AS total_ventas
+  FROM ventas
+  WHERE MONTH(fechaVenta) = MONTH(NOW()) AND YEAR(fechaVenta) = YEAR(NOW());
+END;
+
+
 ----------------------------------------------------------INSERTS---------------------------------------------------------
 SET IDENTITY_INSERT role ON
 INSERT INTO role (idrole, name, description) VALUES
@@ -299,6 +355,9 @@ DROP VIEW v_compras_estatus;
 DROP VIEW v_detalle_compras_con_material;
 DROP VIEW v_user_con_domicilio;
 DROP VIEW v_usuario_con_domicilio;
+DROP VIEW v_gastos;
+DROP VIEW v_finanzas;
+DROP VIEW v_ingresos;
 
 
 
@@ -317,6 +376,7 @@ select * from compraMateriaPrima;
 
 
 
+
 select * from v_tipo_producto;
 select * from v_detalle_producto;
 select * from v_detalle_compras;
@@ -325,7 +385,9 @@ select * from v_compras_estatus;
 select * from v_detalle_compras_con_material;
 select * from v_user_con_domicilio;
 select * from v_usuario_con_domicilio;
-
+select * from v_gastos;
+select * from v_finanzas;
+select * from v_ingresos;
 
 
 
@@ -334,8 +396,7 @@ select * from v_usuario_con_domicilio;
 UPDATE [user]
 SET active = 1 WHERE id=6;
 */
-UPDATE [user]
-SET idrole = 3 WHERE id=4;
+
 
 
 

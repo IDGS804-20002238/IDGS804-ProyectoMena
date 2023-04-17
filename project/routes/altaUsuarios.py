@@ -145,6 +145,18 @@ def update_usuario():
 
         response = {'status': 'success', 'message': 'El usuario se ha actualizado correctamente'}
         return jsonify(response)
+    
+    # Si el correo no ha cambiado, se actualiza solo la información del usuario
+    user.name = name
+    user.password = generate_password_hash(password, method='sha256')
+    user.idrole = estatus
+
+    # confirma los cambios en la base de datos
+    db.session.commit()
+
+    response = {'status': 'success', 'message': 'El usuario se ha actualizado correctamente'}
+    return jsonify(response)
+
 
 
 

@@ -201,6 +201,26 @@ class v_user_con_domicilio_role(db.Model):
     role_name = db.Column(db.String(255), nullable=False)
     domicilio = db.Column(db.String(255), nullable=False)
     active = db.Column(db.Boolean(), default=True)
+
+
+
+class v_gastos(db.Model):
+    __tablename__ = 'v_gastos'
+    compraMateriaPrimaID = db.Column(db.Integer, primary_key=True)
+    proovedoresId = db.Column(db.Integer, nullable=False)
+    proveedor = db.Column(db.String(250), nullable=False)
+    cantidadEnMetros = db.Column(db.Integer, nullable=False)
+    pagoTotal = db.Column(db.Integer, nullable=False)
+    confirmed_at = db.Column(db.DateTime, nullable=False)
+
+class v_finanzas(db.Model):
+    __tablename__ = 'v_finanzas'
+    gastos = db.Column(db.Integer, primary_key=True)
+    ingresos = db.Column(db.Integer, nullable=False)
+    ganancias = db.Column(db.Integer, nullable=False)
+    mes_actual = db.Column(db.String(250), nullable=False)
+
+    
     
 
 

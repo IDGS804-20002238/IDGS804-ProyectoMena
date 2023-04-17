@@ -132,6 +132,12 @@
                 <a href="{{ url_for('altaUsuarios.createUsers') }}">Alta de usuarios</a>
               </li>
               {% endif %} 
+              {% if current_user.is_authenticated and
+                (current_user.idrole == 1)%}
+                <li>
+                  <a href="{{ url_for('finanzas.getFinanzas') }}">Finanzas</a>
+                </li>
+                {% endif %} 
               
             {% if current_user.is_authenticated %}
             <li><a href="{{ url_for('main.contacto') }}">Contacto</a></li>
@@ -1311,10 +1317,13 @@
             type: "POST",
             contentType: "application/json;charset=UTF-8",
             success: function(data){
-              $("#proveedor").val(data.nombre).prop("readonly", true);
               $("#costxmetro").val(data.costoxmetro).prop("readonly", true);
               $("#materiaPrima").val(data.materiaPrima);
-              $("#materiaPrima").prop("disabled", true).selectpicker('refresh');
+              $("#proveedor").val(data.nombre);
+              $("#materiaPrima").prop("disabled", true);
+              $("#proveedor").prop("disabled", true);
+              $("#materiaPrima").selectpicker('refresh');
+              $("#proveedor").selectpicker('refresh');
             }
           });
         });
@@ -1980,7 +1989,7 @@
               data: data,
               contentType: "application/json;charset=UTF-8",
               success: function (response) {
-                console.log(response.status);
+                console.log(response);
                 // Manejar la respuesta del servidor
               if (response.status == 'success'){
                 Swal.fire({
@@ -2018,6 +2027,12 @@
 
         });
         //-----------------------------------------Fin Alta de Usuarios-----------------------------------------
+
+
+        //-----------------------------------------Inicio Finanzas-----------------------------------------
+
+
+        //-----------------------------------------Fin Finanzas-----------------------------------------
 
 
         //fin docuemntready
