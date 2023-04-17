@@ -1,0 +1,162 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<main id="main">
+
+    <!-- ======= Breadcrumbs ======= -->
+    <section id="breadcrumbs" class="breadcrumbs">
+        <div class="container">
+
+            <div class="d-flex justify-content-between align-items-center">
+                <h2>Alta de usuarios</h2>
+            </div>
+
+        </div>
+    </section><!-- End Breadcrumbs -->
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="alert alert-warning" role="alert">
+        {{ messages[0] }}. Go to <a href="{{ url_for('auth.login') }}">login page</a>.
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <!-- ======= Contact Section ======= -->
+    <div class="d-flex justify-content-center">
+        <button id="altadeusuariosAbrir" class="btn btn-primary">Añadir usuario nuevo</button>
+        <button id="altadeusuariosCerrar" class="btn btn-danger"><i class="fa-sharp fa-solid fa-circle-xmark"></i></button>
+    </div>
+    
+        <section id="contact" class="contact usuarios">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 mt-lg-0 mx-auto">
+                        <form>
+                            <div class="row">
+                                <div class="col-md-6 form-group">
+                                    <label for="email">Correo electrónico:</label>
+                                    <input type="email" name="email" class="form-control" id="email" placeholder="Ingresa tu correo electrónico" pattern="[a-zA-Z0-9._%+-]+@(gmail|hotmail|outlook)\.[a-zA-Z]{2,}$" required>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label for="nombre">Nombre:</label>
+                                    <input class="form-control" type="text" name="nombre" id="nombre" placeholder="Nombre" placeholder="Ingresa tu nombre" required>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label for="idrole">Rol del usuario:</label>
+                                    <select class="selectpicker form-control" id="idrole" name="idrole" data-live-search="true">
+                                        <option value="2">Empleado</option>
+                                        <option value="3">Repartidor</option>
+                                        <option value="4">Cliente</option>
+                                    </select>    
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label for="password">Contraseña:</label>
+                                    <input type="password" class="form-control" name="password" id="password" placeholder="Ingresa tu contraseña" required>
+                                </div>
+                                <div class="col-md-12"><hr></div>
+                                <div class="col-md-6 form-group">
+                                    <label for="estado">Estado:</label>
+                                    <input type="text" class="form-control" name="estado" id="estado" placeholder="Ingresa tu estado" required>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label for="municipio">Municipio:</label>
+                                    <input type="text" class="form-control" name="municipio" id="municipio" placeholder="Ingresa tu municipio" required>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label for="codigoPostal">Código Postal:</label>
+                                    <input type="number" class="form-control" name="codigoPostal" id="codigoPostal" placeholder="Ingresa tu código postal" required>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label for="colonia">Colonia:</label>
+                                    <input type="text" class="form-control" name="colonia" id="colonia" placeholder="Ingresa tu colonia" required>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label for="calle">Calle:</label>
+                                    <input type="text" class="form-control" name="calle" id="calle" placeholder="Ingresa tu calle" required>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label for="numeroExt">Número Exterior:</label>
+                                    <input type="number" class="form-control" name="numeroExt" id="numeroExt" placeholder="Ingresa tu número exterior" required>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label for="numeroInt">Número Interior (opcional):</label>
+                                    <input type="number" class="form-control" name="numeroInt" id="numeroInt" placeholder="Ingresa tu número interior" >
+                                </div>
+                                <div class="col-md-12 form-group">
+                                    <label for="referencia">Referencia:</label>
+                                    <input type="text" class="form-control" name="referencia" id="referencia" placeholder="Ingresa una referencia para ubicar tu domicilio" required>
+                                </div>
+                                <div id="mensaje-error" class="text-danger"></div>
+                            </div>
+                            <div class="text-center"><input class="btn btn-success" id="btnUpdateUsuario"  type="submit" value="Editar Usuario"></div>
+                            <div class="text-center"><input class="btn btn-success" id="btnRegistrarUsuario"  type="submit" value="Crear Usuario"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section>
+            <div class="container">
+                <table class="table mt-5" id="myTable">
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Rol</th>
+                            <th scope="col">Domicilio</th>
+                            <th scope="col">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in usuario %}
+                        <tr>
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.name }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.role_name }}</td>
+                            <td>{{ user.domicilio }}</td>
+                            <td>
+                                <button class="btn btn-danger btn-custom btnDesactivarUser" value="{{ user.id }}">Desactivar</button>
+                                <button class="btn btn-warning btn-custom btnActualizarUser" value="{{ user.id }}">Actualizar</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <section>
+            <div class="container">
+                <table class="table mt-5" id="myTable">
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Rol</th>
+                            <th scope="col">Domicilio</th>
+                            <th scope="col">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in usuario2 %}
+                        <tr>
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.name }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.role_name }}</td>
+                            <td>{{ user.domicilio }}</td>
+                            <td>
+                                <button class="btn btn-success btn-custom btnActivarUser" value="{{ user.id }}">Activar</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        
+        
+</main><!-- End #main -->
+{% endblock %}

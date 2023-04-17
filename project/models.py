@@ -182,6 +182,7 @@ class v_user_con_domicilio(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(255), unique=True)
+    password = db.Column(db.String(255), nullable=False)
     estado = db.Column(db.String(255), nullable=False)
     municipio = db.Column(db.String(255), nullable=False)
     codigoPostal = db.Column(db.Integer, nullable=False)
@@ -190,6 +191,17 @@ class v_user_con_domicilio(db.Model):
     numeroExt = db.Column(db.Integer, nullable=False)
     numeroInt = db.Column(db.Integer)
     referencia = db.Column(db.String(255), nullable=False)
+
+class v_user_con_domicilio_role(db.Model):
+    __tablename__ = 'v_usuario_con_domicilio'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False)
+    email = db.Column(db.String(255), unique=True)
+    role_name = db.Column(db.String(255), nullable=False)
+    domicilio = db.Column(db.String(255), nullable=False)
+    active = db.Column(db.Boolean(), default=True)
+    
 
 
 

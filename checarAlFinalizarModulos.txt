@@ -12,8 +12,9 @@ o Pedidos--
 o Módulo Informativo--
 o Materia Prima--
 o Proveedores--
+o alta de usuarios--
 
-o alta de usuarios
+
 o Finanzas
 
 

@@ -177,10 +177,21 @@ LEFT JOIN tipo_producto tp ON p.tipoProductoID = tp.tipoProductoID
 LEFT JOIN material_usado mu ON tp.materialUsadoID = mu.materialUsadoID;
 
 CREATE VIEW v_user_con_domicilio AS
-SELECT u.id, u.name, u.email, d.estado, d.municipio, d.codigoPostal, d.colonia, d.calle, d.numeroExt, d.numeroInt, d.referencia
+SELECT u.id, u.name, u.email,u.password, d.estado, d.municipio, d.codigoPostal, d.colonia, d.calle, d.numeroExt, d.numeroInt, d.referencia
 FROM [user] u
 INNER JOIN domicilio d ON u.domicilioId = d.domicilioId;
 
+CREATE VIEW v_usuario_con_domicilio AS
+SELECT u.id, u.name, u.email,
+       r.name as role_name,
+	   u.active,
+       CONCAT(d.estado, ', ', d.municipio, '. ', d.colonia, '. ', d.codigoPostal, '. ',
+              d.calle, ' ', d.numeroExt,
+              CASE WHEN d.numeroInt <> '0' THEN CONCAT(' ', d.numeroInt) ELSE '' END,
+              '. ', d.referencia) as domicilio
+FROM [user] u
+JOIN role r ON u.idrole = r.idrole
+JOIN domicilio d ON u.domicilioId = d.domicilioId
 
 ----------------------------------------------------------INSERTS---------------------------------------------------------
 SET IDENTITY_INSERT role ON
@@ -188,7 +199,8 @@ INSERT INTO role (idrole, name, description) VALUES
 (1, 'Admin', 'administrador'),
 (2, 'Empleado', 'Empleado de la empresa'),
 (3, 'Repartidor', 'Repartidor de la emprea'),
-(4, 'Cliente', 'Cliente de la empresa');
+(4, 'Cliente', 'Cliente de la empresa'),
+(5, 'Inactivo', 'Usuario Inactivo');
 SET IDENTITY_INSERT role OFF
 
 SET IDENTITY_INSERT domicilio ON
@@ -260,6 +272,7 @@ values
 	(5,'PEDIDO CANCELADO');
 SET IDENTITY_INSERT cat_Estatus OFF
 
+
 ----------------------------------------------------------querys---------------------------------------------------------
 /*
 USE mena;
@@ -285,6 +298,7 @@ DROP VIEW v_roles_users;
 DROP VIEW v_compras_estatus;
 DROP VIEW v_detalle_compras_con_material;
 DROP VIEW v_user_con_domicilio;
+DROP VIEW v_usuario_con_domicilio;
 
 
 
@@ -310,6 +324,7 @@ select * from v_roles_users;
 select * from v_compras_estatus;
 select * from v_detalle_compras_con_material;
 select * from v_user_con_domicilio;
+select * from v_usuario_con_domicilio;
 
 
 
@@ -319,8 +334,8 @@ select * from v_user_con_domicilio;
 UPDATE [user]
 SET active = 1 WHERE id=6;
 */
-UPDATE materiaPrima
-SET metrosMateriaPrima = 1000 WHERE materiaPrimaId=1;
+UPDATE [user]
+SET idrole = 3 WHERE id=4;
 
 
 

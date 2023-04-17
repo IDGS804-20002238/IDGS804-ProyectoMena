@@ -7,6 +7,7 @@
     <meta content="" name="description" />
     <meta content="" name="keywords" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/smart_wizard.min.css" rel="stylesheet"
     type="text/css" />
     <link href="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/smart_wizard_theme_dots.min.css" rel="stylesheet"
@@ -91,8 +92,7 @@
       <div class="container d-flex align-items-center">
         <nav id="navbar" class="navbar">
           <ul>
-            {% if current_user.is_authenticated and (current_user.idrole == 1 or
-            current_user.idrole == 2 or current_user.idrole == 4) %}
+            {% if current_user.is_authenticated and (current_user.idrole == 1  or current_user.idrole == 4) %}
             <li><a href="{{ url_for('productos.galeria') }}">Productos</a></li>
             {% endif %} {% if current_user.is_authenticated and
             (current_user.idrole == 1 or current_user.idrole == 2)%}
@@ -125,9 +125,16 @@
             <li>
               <a href="{{ url_for('pedidos.verPedidos') }}">Mis Pedidos</a>
             </li>
-            <li><a href="{{ url_for('main.contacto') }}">Contacto</a></li>
-            {% endif %} 
+            {% endif %}
+            {% if current_user.is_authenticated and
+              (current_user.idrole == 1)%}
+              <li>
+                <a href="{{ url_for('altaUsuarios.createUsers') }}">Alta de usuarios</a>
+              </li>
+              {% endif %} 
+              
             {% if current_user.is_authenticated %}
+            <li><a href="{{ url_for('main.contacto') }}">Contacto</a></li>
             <li><a href="{{ url_for('auth.logout') }}">Salir</a></li>
             {% endif %}
           </ul>
@@ -449,6 +456,8 @@
         $(".pago").hide();
         $(".cantidad").hide();
         $("#comprarH2").hide();
+        $(".usuarios").hide();
+        $("#altadeusuariosCerrar").hide();
         
         $('#smartwizard').smartWizard({
           selected: 0,
@@ -1335,7 +1344,7 @@
             proovedoresId: id,
             nombreMateriaPrima: MateriaPrima
           });
-          if (cantidadMetros == '' || cantidadMetros < 50 || cantidadMetros > 1000){
+          if (cantidadMetros == '' || cantidadMetros < 50 || cantidadMetros > 5000){
             validado = false;
             mensajeError += "Ingresa cantidad en metros, deben ser minimo 50 y maximo 1000 metros\n";
             $("#cantidad").css("border-color", "red");
@@ -1577,7 +1586,438 @@
 
         //-----------------------------------------fin Registro---------------------------------------------------
 
+        //-----------------------------------------Inicio Alta de Usuarios-----------------------------------------
+        $("#altadeusuariosAbrir").click(function(){
+          $(".usuarios").show();
+          $("#altadeusuariosAbrir").hide();
+          $("#altadeusuariosCerrar").show();
+          $("#btnUpdateUsuario").hide();
+          $("#btnRegistrarUsuario").show();
+        })
+        
+        $("#altadeusuariosCerrar").click(function(){
+          $("#email").val('');
+          $("#nombre").val('');
+          $("#estado").val('');
+          $("#municipio").val('');
+          $("#codigoPostal").val('');
+          $("#colonia").val('');
+          $("#calle").val('');
+          $("#numeroInt").val('');
+          $("#numeroExt").val('');
+          $("#referencia").val('');
+          $(".usuarios").hide();
+          $("#altadeusuariosAbrir").show();
+          $("#altadeusuariosCerrar").hide();
+          $("#btnUpdateUsuario").hide();
+          $("#btnRegistrarUsuario").show();
 
+
+        })
+
+        $("#btnRegistrarUsuario").click(function(){
+          event.preventDefault();
+          var correo = $("#email").val().trim();
+          var nombre = $("#nombre").val().trim();
+          var contraseña = $("#password").val().trim();
+          var estado = $("#estado").val().trim();
+          var municipio = $("#municipio").val().trim();
+          var cp = $("#codigoPostal").val().trim();
+          var colonia = $("#colonia").val().trim();
+          var calle = $("#calle").val().trim();
+          var numeroInt = $("#numeroInt").val().trim();
+          var numeroExt = $("#numeroExt").val().trim();
+          var ref = $("#referencia").val().trim();
+          var estatus = $("#idrole").val();
+          var mensajeError = "Ingresa datos faltantes";
+          var validado = true;
+
+          var data = JSON.stringify({
+            email: correo,
+            name: nombre,
+            password: contraseña,
+            estado:estado,
+            municipio:municipio,
+            codigoPostal:cp,
+            colonia:colonia,
+            calle:calle,
+            numeroInt:numeroInt,
+            numeroExt:numeroExt,
+            referencia:ref,
+            estatus:estatus
+          });
+
+
+          // Verifica que los campos requeridos no estén vacíos o llenos de espacios
+          if (correo == '' || !/(gmail|hotmail|outlook)\.com$/i.test(correo)) {
+            validado = false;
+            $("#email").css("border-color", "red");
+            if (correo == '') {
+              validado = false;
+              $("#email").css("border-color", "red");
+            } else {
+              validado = false;
+              mensajeError = '';
+              mensajeError += 'Por favor ingrese una dirección de correo electrónico válida de Gmail, Hotmail u Outlook.'
+            }
+          }
+          
+          if (nombre == ''){
+            validado = false;
+            $("#nombre").css("border-color", "red");
+          }
+          if (contraseña == ''){
+            validado = false;
+            $("#password").css("border-color", "red");
+          }
+          if (estado == ''){
+            validado = false;
+            $("#estado").css("border-color", "red");
+          }
+          if (municipio == ''){
+            validado = false;
+            $("#municipio").css("border-color", "red");
+          }
+          if (cp == ''){
+            validado = false;
+          
+            $("#codigoPostal").css("border-color", "red");
+          }
+          if (colonia == ''){
+            validado = false;
+            $("#colonia").css("border-color", "red");
+          }
+          if (calle == ''){
+            validado = false;
+            $("#calle").css("border-color", "red");
+          }
+          if (numeroExt == ''){
+            validado = false;
+          
+            $("#numeroExt").css("border-color", "red");
+          }
+          if (ref == ''){
+              validado = false;
+              $("#referencia").css("border-color", "red");
+          }
+          $("#mensaje-error").text(mensajeError);
+          if (validado == true){
+            $.ajax({
+              type: "POST",
+              url: "/altaUsuarios/registerUsuario",
+              data: data,
+              contentType: "application/json;charset=UTF-8",
+              success: function (response) {
+                console.log(response.status);
+                // Manejar la respuesta del servidor
+              if (response.status == 'success'){
+                Swal.fire({
+                  icon: "success",
+                  title: "Registro correcto!",
+                  text: "Nuevo usuario registrado",
+                  showConfirmButton: true,
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    location.reload();
+                  }
+                  else {
+                    location.reload();
+                  }
+                });
+              }
+              if (response.status == 'error'){
+                Swal.fire({
+                  icon: "error",
+                  title: "Oops...",
+                  text: "El correo ya está registrado, usa otro",
+                });
+              }
+              },
+              error: function (error) {
+                // Manejar el error
+                Swal.fire({
+                  icon: "error",
+                  title: "Oops...",
+                  text: "Algo salió mal!",
+                });
+              },
+            });
+          }
+
+        });
+
+        //desactivar usuario
+        $(".btnDesactivarUser").click(function(){
+          var id = $(this).val();
+          var data = JSON.stringify({
+            id: id,
+          });
+          Swal.fire({
+            title: "Desactivar Usuario?",
+            text: "Estás seguro que deseas eliminar al usuario?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Si, eliminar!"
+          }).then((result) => {
+            if (result.isConfirmed) {
+              $.ajax({
+                type: "POST",
+                url: "/altaUsuarios/eliminar_user",
+                data: data,
+                contentType: "application/json;charset=UTF-8",
+                success: function (response) {
+                  // Manejar la respuesta del servidor
+                  Swal.fire({
+                    icon: "success",
+                    title: "Usuario Eliminado!",
+                    showConfirmButton: true,
+                  }).then((result) => {
+                    if (result.isConfirmed) {
+                      location.reload();
+                    }
+                    else {
+                      location.reload();
+                    }
+                  });
+                },
+                error: function (error) {
+                  // Manejar el error
+                  Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "Algo salió mal!",
+                  });
+                },
+              });
+            }
+          });
+
+        })
+
+        //actualizar usuario
+        var idUser = ""
+        $(".btnActualizarUser").click(function(){
+          $(".usuarios").show();
+          $("#altadeusuariosAbrir").hide();
+          $("#altadeusuariosCerrar").show();
+          $("#btnUpdateUsuario").show();
+          $("#btnRegistrarUsuario").hide();
+          idUser = ""
+          var id = $(this).val();
+          idUser += id;
+          var data = JSON.stringify({
+            id: id,
+          });
+          
+          $.ajax({
+            url: "/altaUsuarios/actualizar_user",
+            data: data,
+            type: "POST",
+            contentType: "application/json;charset=UTF-8",
+            success: function(data){
+              $("#email").val(data.email);
+              $("#nombre").val(data.name);
+              $("#estado").val(data.estado);
+              $("#municipio").val(data.municipio);
+              $("#codigoPostal").val(data.codigoPostal);
+              $("#colonia").val(data.colonia);
+              $("#calle").val(data.calle);
+              $("#numeroInt").val(data.numeroInt);
+              $("#numeroExt").val(data.numeroExt);
+              $("#referencia").val(data.referencia);
+            }
+          });
+        })
+
+
+
+        //activar usuario
+        $(".btnActivarUser").click(function(){
+          var id = $(this).val();
+          var data = JSON.stringify({
+            id: id,
+          });
+          Swal.fire({
+            title: "Activar Usuario?",
+            text: "Estás seguro que deseas Activar al usuario?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Si, Activar!"
+          }).then((result) => {
+            if (result.isConfirmed) {
+              $.ajax({
+                type: "POST",
+                url: "/altaUsuarios/activar_user",
+                data: data,
+                contentType: "application/json;charset=UTF-8",
+                success: function (response) {
+                  // Manejar la respuesta del servidor
+                  Swal.fire({
+                    icon: "success",
+                    title: "Usuario Activado!",
+                    showConfirmButton: true,
+                  }).then((result) => {
+                    if (result.isConfirmed) {
+                      location.reload();
+                    }
+                    else {
+                      location.reload();
+                    }
+                  });
+                },
+                error: function (error) {
+                  // Manejar el error
+                  Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "Algo salió mal!",
+                  });
+                },
+              });
+            }
+          });
+        })
+
+
+        //UpdateUsuario 
+
+        $("#btnUpdateUsuario").click(function(){
+          event.preventDefault();
+          var id = idUser
+          var correo = $("#email").val().trim();
+          var nombre = $("#nombre").val().trim();
+          var contraseña = $("#password").val().trim();
+          var estado = $("#estado").val().trim();
+          var municipio = $("#municipio").val().trim();
+          var cp = $("#codigoPostal").val().trim();
+          var colonia = $("#colonia").val().trim();
+          var calle = $("#calle").val().trim();
+          var numeroInt = $("#numeroInt").val().trim();
+          var numeroExt = $("#numeroExt").val().trim();
+          var ref = $("#referencia").val().trim();
+          var estatus = $("#idrole").val();
+          var mensajeError = "Ingresa datos faltantes";
+          var validado = true;
+
+          var data = JSON.stringify({
+            id:id,
+            email: correo,
+            name: nombre,
+            password: contraseña,
+            estado:estado,
+            municipio:municipio,
+            codigoPostal:cp,
+            colonia:colonia,
+            calle:calle,
+            numeroInt:numeroInt,
+            numeroExt:numeroExt,
+            referencia:ref,
+            estatus:estatus
+          });
+
+
+          // Verifica que los campos requeridos no estén vacíos o llenos de espacios
+          if (correo == '' || !/(gmail|hotmail|outlook)\.com$/i.test(correo)) {
+            validado = false;
+            $("#email").css("border-color", "red");
+            if (correo == '') {
+              validado = false;
+              $("#email").css("border-color", "red");
+            } else {
+              validado = false;
+              mensajeError = '';
+              mensajeError += 'Por favor ingrese una dirección de correo electrónico válida de Gmail, Hotmail u Outlook.'
+            }
+          }
+          
+          if (nombre == ''){
+            validado = false;
+            $("#nombre").css("border-color", "red");
+          }
+          if (contraseña == ''){
+            validado = false;
+            $("#password").css("border-color", "red");
+          }
+          if (estado == ''){
+            validado = false;
+            $("#estado").css("border-color", "red");
+          }
+          if (municipio == ''){
+            validado = false;
+            $("#municipio").css("border-color", "red");
+          }
+          if (cp == ''){
+            validado = false;
+          
+            $("#codigoPostal").css("border-color", "red");
+          }
+          if (colonia == ''){
+            validado = false;
+            $("#colonia").css("border-color", "red");
+          }
+          if (calle == ''){
+            validado = false;
+            $("#calle").css("border-color", "red");
+          }
+          if (numeroExt == ''){
+            validado = false;
+          
+            $("#numeroExt").css("border-color", "red");
+          }
+          if (ref == ''){
+              validado = false;
+              $("#referencia").css("border-color", "red");
+          }
+          $("#mensaje-error").text(mensajeError);
+          if (validado == true){
+            $.ajax({
+              type: "POST",
+              url: "/altaUsuarios/update_usuario",
+              data: data,
+              contentType: "application/json;charset=UTF-8",
+              success: function (response) {
+                console.log(response.status);
+                // Manejar la respuesta del servidor
+              if (response.status == 'success'){
+                Swal.fire({
+                  icon: "success",
+                  title: "Edicion correcta!",
+                  text: "Nuevo usuario registrado",
+                  showConfirmButton: true,
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    location.reload();
+                  }
+                  else {
+                    location.reload();
+                  }
+                });
+              }
+              if (response.status == 'error'){
+                Swal.fire({
+                  icon: "error",
+                  title: "Oops...",
+                  text: "El correo ya está registrado, usa otro",
+                });
+              }
+              },
+              error: function (error) {
+                // Manejar el error
+                Swal.fire({
+                  icon: "error",
+                  title: "Oops...",
+                  text: "Algo salió mal!",
+                });
+              },
+            });
+          }
+
+        });
+        //-----------------------------------------Fin Alta de Usuarios-----------------------------------------
 
 
         //fin docuemntready

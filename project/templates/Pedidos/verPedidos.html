@@ -46,22 +46,24 @@
                 <td>{{ detalle.fechaCompra }}</td>
                 <td>${{ detalle.subtotal }}</td>
                 <td>
-                    {% if (current_user.idrole == 1 or current_user.idrole == 2 or current_user.idrole == 4) %}
-                    <button class="btn btn-warning"><a class="btnVerDetalle" href="{{ url_for('pedidos.ver_detalle', idPedido=detalle.idCompra) }}">Ver Detalle</a></button>
-                    {% endif %}
-                    {% if detalle.descripcionEstatus == 'PEDIDO ENVIADO' and (current_user.idrole == 1 or current_user.idrole == 3) %}
-                    <button class="btn btn-success btnEntregar" value="{{ detalle.idCompra }}" >Entregar Pedido</button>
-                    {% endif %}
-                    {% if detalle.descripcionEstatus == 'ELABORANDO PEDIDO' and (current_user.idrole == 1 or current_user.idrole == 2) %}
-                      <button class="btn btn-success btnEnviar" value="{{ detalle.idCompra }}" >Enviar Pedido</button>
-                    {% endif %}
-                    {% if detalle.descripcionEstatus == 'EN ESPERA DE ELABORACION' and (current_user.idrole == 1 or current_user.idrole == 2) %}
-                      <button class="btn btn-success btnAceptar" value="{{ detalle.idCompra }}" >Elaborar Pedido</button>
-                    {% endif %}
-                    {% if detalle.descripcionEstatus == 'EN ESPERA DE ELABORACION' and (current_user.idrole == 1 or current_user.idrole == 2 or current_user.idrole == 4) %}
-                        <button class="btn btn-danger btnCancelarPedido" value="{{ detalle.idCompra }}">Cancelar</button>
-                    {% endif %}
+                  {% if (current_user.idrole == 1 or current_user.idrole == 2 or current_user.idrole == 4) %}
+                    <button class="btn btn-warning btn-custom"><a class="btnVerDetalle" href="{{ url_for('pedidos.ver_detalle', idPedido=detalle.idCompra) }}">Ver Detalle</a></button>
+                  {% endif %}
+                  {% if detalle.descripcionEstatus == 'PEDIDO ENVIADO' and (current_user.idrole == 1 or current_user.idrole == 3) %}
+                    <button class="btn btn-success btn-custom btnEntregar" value="{{ detalle.idCompra }}" >Entregar Pedido</button>
+                  {% endif %}
+                  {% if detalle.descripcionEstatus == 'ELABORANDO PEDIDO' and (current_user.idrole == 1 or current_user.idrole == 2) %}
+                    <button class="btn btn-success btn-custom btnEnviar" value="{{ detalle.idCompra }}" >Enviar Pedido</button>
+                  {% endif %}
+                  {% if detalle.descripcionEstatus == 'EN ESPERA DE ELABORACION' and (current_user.idrole == 1 or current_user.idrole == 2) %}
+                    <button class="btn btn-success btn-custom btnAceptar" value="{{ detalle.idCompra }}" >Elaborar Pedido</button>
+                  {% endif %}
+                  {% if detalle.descripcionEstatus == 'EN ESPERA DE ELABORACION' and (current_user.idrole == 1 or current_user.idrole == 2 or current_user.idrole == 4) %}
+                    <button class="btn btn-danger btn-custom btnCancelarPedido" value="{{ detalle.idCompra }}">Cancelar</button>
+                  {% endif %}
                 </td>
+                
+                
                 
               </tr>
               {% endfor %}

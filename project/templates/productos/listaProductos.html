@@ -45,10 +45,10 @@
                         <td><img src="../static/img/productos/{{producto.image_name}}" width="10" height="100" class="card-img-top" alt="..."></td>
                         <td>
                             <a href="{{url_for('productos.updateProducto', id=producto.idProducto)}}">
-                                <button type="button" class="btn btn-warning">Actualizar</button>
+                                <button type="button" class="btn btn-warning btn-custom">Actualizar</button>
                             </a>
                             <a href="{{url_for('productos.deleteProducto', id=producto.idProducto)}}">
-                                <button type="button" class="btn btn-danger" value="producto.idProducto">Desactivar</button>
+                                <button type="button" class="btn btn-danger btn-custom" value="producto.idProducto">Desactivar</button>
                             </a>
                         </td>
                     </tr>
@@ -74,11 +74,8 @@
                         <td>${{producto.precio}}</td>
                         <td><img src="../static/img/productos/{{producto.image_name}}" width="10" height="100" class="card-img-top" alt="..."></td>
                         <td>
-                            <a href="{{url_for('productos.updateProducto', id=producto.idProducto)}}">
-                                <button type="button" class="btn btn-warning">Actualizar</button>
-                            </a>
                             <a href="{{url_for('productos.activeProducto', id=producto.idProducto)}}">
-                                <button type="button" class="btn btn-danger" value="producto.idProducto">Activar</button>
+                                <button type="button" class="btn btn-success btn-custom" value="producto.idProducto">Activar</button>
                             </a>
                         </td>
                     </tr>

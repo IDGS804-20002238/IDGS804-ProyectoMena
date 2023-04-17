@@ -52,5 +52,8 @@ def create_app():
     from .routes.pedidos import pedidos as main_blueprint
     app.register_blueprint(main_blueprint)
 
+    from .routes.altaUsuarios import altaUsuarios as main_blueprint
+    app.register_blueprint(main_blueprint)
+
 
     return app
