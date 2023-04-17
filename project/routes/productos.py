@@ -12,18 +12,18 @@ from pathlib import Path
 
 productos = Blueprint('productos', __name__, url_prefix='/productos')
 
-# logger = logging.getLogger(__name__)
-# logger.setLevel(logging.INFO)
-# formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-# file_handler = logging.FileHandler('app.log')
-# file_handler.setFormatter(formatter)
-# logger.addHandler(file_handler)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+file_handler = logging.FileHandler('app.log')
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
 
 @productos.route('/galeria')
 @login_required
 def galeria():
     productos = Productos.query.filter_by(estatus=1).all()
-    # logger.info('Galeria de productos vista por el usuario: %s', current_user.name)
+    logger.info('Galeria de productos vista por el usuario: %s', current_user.name)
     return render_template('/productos/galeria.html', productos=productos)
 
 @productos.route('/listaProductos')
@@ -32,9 +32,11 @@ def listaProductos():
     if (current_user.idrole == 1 or current_user.idrole == 2):
         productos = Productos.query.filter_by(estatus=1).all()
         productos2 = Productos.query.filter_by(estatus=2).all()
+        logger.info('lista de productos vista por el usuario: %s', current_user.name)
         return render_template('/productos/listaProductos.html', productos1=productos, productos2=productos2)
     else:
         flash('No tiene permisos para acceder a esta vista.')
+        logger.info('error de permisos, no puede ingresar debido a su rol, nombre del usuario que intentó ingresar: %s', current_user.name)
         return redirect(url_for('main.profile'))
 
 @productos.route('/addProducto')
@@ -42,9 +44,11 @@ def listaProductos():
 def addProducto():
     if (current_user.idrole == 1 or current_user.idrole == 2):
         tipos = TipoProducto.query.all()
+        logger.info('vista añadir usuario vista por el usuario: %s', current_user.name)
         return render_template('/productos/addProductos.html', tipos=tipos)
     else:
         flash('No tiene permisos para acceder a esta vista.')
+        logger.info('error de permisos, no puede ingresar debido a su rol, nombre del usuario que intentó ingresar: %s', current_user.name)
         return redirect(url_for('main.profile'))
 
 
@@ -79,12 +83,13 @@ def addProducto_post():
             producto = Productos(nombre=nombre, precio=precio, image_name=file_name, tipoProductoID=tipo_producto_id)
             db.session.add(producto)
             db.session.commit()
-            # logger.info('El producto %s ha sido agregado exitosamente', nombre)
+            logger.info('El producto %s ha sido agregado exitosamente', nombre)
             flash('Producto agregado exitosamente.')
         return redirect(url_for('productos.listaProductos'))
     else:
-            flash('No tiene permisos para acceder a esta vista.')
-            return redirect(url_for('main.profile'))
+        flash('No tiene permisos para acceder a esta vista.')
+        logger.info('error de permisos, no puede ingresar debido a su rol, nombre del usuario que intentó ingresar: %s', current_user.name)
+        return redirect(url_for('main.profile'))
 
 
 
@@ -120,13 +125,14 @@ def updateProducto(id):
                 producto.image_name = file_name
                 producto.tipoProductoID = tipo_producto_id
                 db.session.commit()
-                # logger.info('El producto %s ha sido agregado exitosamente', nombre)
+                logger.info('El producto %s ha sido agregado exitosamente', nombre)
                 flash('Producto Editado exitosamente.')
                 return redirect(url_for('productos.listaProductos'))
         
         return render_template('/productos/updateProductos.html', producto=producto,tipos=tipos)
     else:
         flash('No tiene permisos para acceder a esta vista.')
+        logger.info('error de permisos, no puede ingresar debido a su rol, nombre del usuario que intentó ingresar: %s', current_user.name)
         return redirect(url_for('main.profile'))
 
 @productos.route('/deleteProducto/<id>')
@@ -136,11 +142,12 @@ def deleteProducto(id):
         producto = Productos.query.get(id)
         producto.estatus = 2
         db.session.commit()
-        # logger.info('El producto se ha desactivado exitosamente.')
+        logger.info('El producto se ha desactivado exitosamente.')
         flash('Producto desactivado exitosamente.')
         return redirect(url_for('productos.listaProductos'))
     else:
         flash('No tiene permisos para acceder a esta vista.')
+        logger.info('error de permisos, no puede ingresar debido a su rol, nombre del usuario que intentó ingresar: %s', current_user.name)
         return redirect(url_for('main.profile'))
 
 @productos.route('/activeProducto/<id>')
@@ -150,11 +157,12 @@ def activeProducto(id):
         producto = Productos.query.get(id)
         producto.estatus = 1
         db.session.commit()
-        # logger.info('El producto se ha desactivado exitosamente.')
+        logger.info('El producto se ha desactivado exitosamente.')
         flash('Producto activado exitosamente.')
         return redirect(url_for('productos.listaProductos'))
     else:
         flash('No tiene permisos para acceder a esta vista.')
+        logger.info('error de permisos, no puede ingresar debido a su rol, nombre del usuario que intentó ingresar: %s', current_user.name)
         return redirect(url_for('main.profile'))
 
 

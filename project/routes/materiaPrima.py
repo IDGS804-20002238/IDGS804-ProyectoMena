@@ -12,25 +12,35 @@ from pathlib import Path
 
 materiaPrima = Blueprint('materiaPrima', __name__, url_prefix='/materiaPrima')
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+file_handler = logging.FileHandler('app.log')
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
+
 @materiaPrima.route('/galeriaMateriaPrima')
 @login_required
 def galeriaMateriaPrima():
     if (current_user.idrole == 1 or current_user.idrole == 2):
         materiaPrima = MateriaPrima.query.all()
-        # logger.info('Galeria de productos vista por el usuario: %s', current_user.name)
+        logger.info('Galeria de productos vista por el usuario: %s', current_user.name)
         return render_template('/Materia_Prima/materia_prima.html', materiaPrima=materiaPrima)
     else:
-            flash('No tiene permisos para acceder a esta vista.')
-            return redirect(url_for('main.profile'))
+        flash('No tiene permisos para acceder a esta vista.')
+        logger.info('error de permisos, no puede ingresar debido a su rol, nombre del usuario que intentó ingresar: %s', current_user.name)
+        return redirect(url_for('main.profile'))
 
 @materiaPrima.route('/Proovedores')
 @login_required
 def proovedores():
     if (current_user.idrole == 1):
         proovedores = Proveedor.query.filter(Proveedor.estatus == 1)
+        logger.info('vista proveedores visitada por el usuario: %s', current_user.name)
         return render_template('/Materia_Prima/proovedores.html', proovedores=proovedores)
     else:
         flash('No tiene permisos para acceder a esta vista.')
+        logger.info('error de permisos, no puede ingresar debido a su rol, nombre del usuario que intentó ingresar: %s', current_user.name)
         return redirect(url_for('main.profile'))
 
 
@@ -45,9 +55,11 @@ def guardar_proovedor():
     
          db.session.add(proveedor)
          db.session.commit()
+         logger.info('guardar proveedor por el usuario: %s', current_user.name)
          return jsonify({'status': 'succes', 'message': 'Exito'})   
     else:
         flash('No tiene permisos para acceder a esta vista.')
+        logger.info('error de permisos, no puede ingresar debido a su rol, nombre del usuario que intentó ingresar: %s', current_user.name)
         return redirect(url_for('main.profile'))     
 
 @materiaPrima.route('/actualizar_proveedor', methods=['GET', 'POST'])
@@ -58,6 +70,7 @@ def actualzar_proovedor():
         proveedor = Proveedor.query.filter_by(proovedoresId=proovedoresId).first()
         
         if proveedor is None:
+            logger.info('error de actualizar proveedor por el usuario: %s', current_user.name)
             return jsonify({"error": "Proveedor no encontrado"})
         
         datos_proveedor = {
@@ -66,10 +79,11 @@ def actualzar_proovedor():
             "materiaPrima": proveedor.materiaPrima,
             "costoxmetro":proveedor.costoxmetro
         }
-        
+        logger.info('actualizar proveedor por el usuario: %s', current_user.name)
         return jsonify(datos_proveedor)
     else:
         flash('No tiene permisos para acceder a esta vista.')
+        logger.info('error de permisos, no puede ingresar debido a su rol, nombre del usuario que intentó ingresar: %s', current_user.name)
         return redirect(url_for('main.profile'))    
 
 
@@ -89,10 +103,12 @@ def editar_proovedor():
         proveedor.costoxmetro = costoxmetro
         proveedor.materiaPrima = materiaPrima
         db.session.commit()
+        logger.info('editar proveedor por el usuario: %s', current_user.name)
         return jsonify({'status': 'succes', 'message': 'Exito'}) 
     else:
-            flash('No tiene permisos para acceder a esta vista.')
-            return redirect(url_for('main.profile'))    
+        flash('No tiene permisos para acceder a esta vista.')
+        logger.info('error de permisos, no puede ingresar debido a su rol, nombre del usuario que intentó ingresar: %s', current_user.name)
+        return redirect(url_for('main.profile'))    
     
 @materiaPrima.route('/comprar_materiaPrima', methods=['GET', 'POST'])
 @login_required
@@ -114,10 +130,12 @@ def comprar_materiaPrima():
 
         # Confirma la transacción
         db.session.commit()
+        logger.info('materia prima comprada por el usuario: %s', current_user.name)
         return jsonify({'status': 'succes', 'message': 'Exito'})
     else:
-            flash('No tiene permisos para acceder a esta vista.')
-            return redirect(url_for('main.profile'))  
+        flash('No tiene permisos para acceder a esta vista.')
+        logger.info('error de permisos, no puede ingresar debido a su rol, nombre del usuario que intentó ingresar: %s', current_user.name)
+        return redirect(url_for('main.profile'))  
 
 @materiaPrima.route('/eliminar_proovedor', methods=['GET', 'POST'])
 @login_required
@@ -128,9 +146,11 @@ def eliminar_proovedor():
 
         proovedor.estatus = 2 # Cambiar estatus a "eliminado"
         db.session.commit()
+        logger.info('elimiar el proveedor por el usuario: %s', current_user.name)
         return jsonify({'status': 'succes', 'message': 'Exito'})
     else:
         flash('No tiene permisos para acceder a esta vista.')
+        logger.info('error de permisos, no puede ingresar debido a su rol, nombre del usuario que intentó ingresar: %s', current_user.name)
         return redirect(url_for('main.profile'))
 
 

@@ -32,24 +32,6 @@ def login_post():
 def register():
     return render_template('/security/register.html')
 
-# @auth.route('/register', methods=['POST'])
-# def register_post():
-#     email = request.form.get('email')
-#     name = request.form.get('name')
-#     password = request.form.get('password')
-
-#     user = User.query.filter_by(email=email).first() # recuperar el primer elemento de la lista
-
-#     if user:
-#         flash('El correo electrónico ya existe')
-#         return redirect(url_for('auth.register'))
-
-#     new_user = User(name=name, email=email, password=generate_password_hash(password, method='sha256'), idrole='4')
-#     db.session.add(new_user)
-#     db.session.commit()
-
-#     return redirect(url_for('auth.login'))
-
 @auth.route('/registerU', methods=['GET', 'POST'])
 def register_post():
     email = request.get_json()['email']

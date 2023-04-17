@@ -14,6 +14,13 @@ from werkzeug.security import check_password_hash
 
 altaUsuarios = Blueprint('altaUsuarios', __name__, url_prefix='/altaUsuarios')
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+file_handler = logging.FileHandler('app.log')
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
+
 @altaUsuarios.route('/createUsers')
 @login_required
 def createUsers():
@@ -21,10 +28,12 @@ def createUsers():
         # logger.info('Galeria de productos vista por el usuario: %s', current_user.name)
         usuario =     v_user_con_domicilio_role.query.filter_by(active=1).filter(v_user_con_domicilio_role.role_name.in_(['Empleado', 'Repartidor', 'Cliente'])).all()
         usuario2 = v_user_con_domicilio_role.query.filter_by(active=0).all()
+        logger.info('usuario creado por el usuario: %s', current_user.name)
         return render_template('/Usuarios/altaUsuarios.html', usuario=usuario, usuario2=usuario2)
     else:
-            flash('No tiene permisos para acceder a esta vista.')
-            return redirect(url_for('main.profile'))
+        flash('No tiene permisos para acceder a esta vista.')
+        logger.info('error de permisos, no puede ingresar debido a su rol, nombre del usuario que intentó ingresar: %s', current_user.name)
+        return redirect(url_for('main.profile'))
     
 @altaUsuarios.route('/eliminar_user', methods=['GET', 'POST'])
 @login_required
@@ -34,10 +43,12 @@ def eliminar_user():
         user = User.query.filter_by(id=id).first()
         user.active = False
         db.session.commit()
+        logger.info('usuario eliminado por el usuario: %s', current_user.name)
         return jsonify({'success': 'Usuario actualizado correctamente'})
     else:
-            flash('No tiene permisos para acceder a esta vista.')
-            return redirect(url_for('main.profile'))
+        flash('No tiene permisos para acceder a esta vista.')
+        logger.info('error de permisos, no puede ingresar debido a su rol, nombre del usuario que intentó ingresar: %s', current_user.name)
+        return redirect(url_for('main.profile'))
     
 @altaUsuarios.route('/activar_user', methods=['GET', 'POST'])
 @login_required
@@ -47,10 +58,12 @@ def activar_user():
         user = User.query.filter_by(id=id).first()
         user.active = 1
         db.session.commit()
+        logger.info('usuario activado por el usuario: %s', current_user.name)
         return jsonify({'success': 'Usuario actualizado correctamente'})
     else:
-            flash('No tiene permisos para acceder a esta vista.')
-            return redirect(url_for('main.profile'))
+        flash('No tiene permisos para acceder a esta vista.')
+        logger.info('error de permisos, no puede ingresar debido a su rol, nombre del usuario que intentó ingresar: %s', current_user.name)
+        return redirect(url_for('main.profile'))
 
 
 
@@ -89,7 +102,7 @@ def register_post():
     new_user = User(name=name, email=email, password=generate_password_hash(password, method='sha256'), idrole=estatus, domicilioId=domicilio_id)
     db.session.add(new_user)
     db.session.commit()
-
+    logger.info(' usuario creado por el usuario: %s', current_user.name)
     response = {'status': 'success', 'message': 'La compra se ha actualizado correctamente'}
     return jsonify(response)
 
@@ -111,6 +124,7 @@ def update_usuario():
         # Verifica si el correo ya existe en la base de datos
         existing_user = User.query.filter_by(email=email).first()
         if existing_user:
+            logger.info('error de update usuario por el usuario: %s', current_user.name)
             response = {'status': 'error', 'message': 'el correo ya existe'}
             return jsonify(response)
 
@@ -142,7 +156,7 @@ def update_usuario():
 
         # confirma los cambios en la base de datos
         db.session.commit()
-
+        logger.info('usuaria actualizado por el usuario: %s', current_user.name)
         response = {'status': 'success', 'message': 'El usuario se ha actualizado correctamente'}
         return jsonify(response)
     
@@ -153,7 +167,7 @@ def update_usuario():
 
     # confirma los cambios en la base de datos
     db.session.commit()
-
+    logger.info('usuaria actualizado por el usuario: %s', current_user.name)
     response = {'status': 'success', 'message': 'El usuario se ha actualizado correctamente'}
     return jsonify(response)
 
@@ -181,10 +195,11 @@ def actualizar_user():
             'referencia': user.referencia,
         }
         
-
+        logger.info('obtener datos del usuario por el usuario: %s', current_user.name)
         return jsonify(user_dict)
     else:
         flash('No tiene permisos para acceder a esta vista.')
+        logger.info('error de permisos, no puede ingresar debido a su rol, nombre del usuario que intentó ingresar: %s', current_user.name)
         return redirect(url_for('main.profile'))
 
 

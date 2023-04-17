@@ -181,71 +181,16 @@
     </div>
     <!-- Fin modal smartwizard -->   
 
-
-    <!-- inicio tarjeta -->
-    <!-- <section>
-        <div class="modal fade" id="modalTarjeta" tabindex="-1" role="dialog">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Validar pago</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                          <label for="input-numero-tarjeta">Número de Tarjeta:</label>
-                          <input type="text" class="form-control" id="input-numero-tarjeta" maxlength="16" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-                        </div>
-                        <div class="form-row">
-                          <div class="form-group col-md-4">
-                            <label for="input-fecha-vencimiento-mes">Mes de Vencimiento:</label>
-                            <input type="text" class="form-control" id="input-fecha-vencimiento-mes" maxlength="2" placeholder="MM" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-                          </div>
-                          <div class="form-group col-md-4">
-                            <label for="input-fecha-vencimiento-anio">Año de Vencimiento:</label>
-                            <input type="text" class="form-control" id="input-fecha-vencimiento-anio" maxlength="2" placeholder="AA" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-                          </div>
-                          <div class="form-group col-md-4">
-                            <label for="input-CVV">CVV:</label>
-                            <br>
-                            <br>
-                            <input type="text" class="form-control" id="input-CVV" maxlength="3" placeholder="cvv" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-                          </div>
-                        </div>
-                        <div id="mensaje-error" class="text-danger"></div>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-warning" type="button" data-dismiss="modal">
-                            Cerrar
-                        </button>
-                        <button class="btn btn-success" type="button" id="comprarBtn">
-                            Comprar
-                        </button>
-                        <button class="btn btn-success" type="button" id="btnVerificarTarjeta">
-                            Verificar Tarjeta
-                        </button>
-
-                        
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section> -->
-
-
-
     <!-- fin tarjeta -->
 
     <!-- inicio galeria -->
     <section id="contact" class="contact">
         <div class="container">
-            <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 row-no-gutters">
+            <div class="row">
                 {% for producto in productos %}
-                <div class="col">
-                    <div class="product-card">
-                        <img src="../static/img/productos/{{producto.image_name}}" class="card-img-top" alt="..." style="max-height: 200px; object-fit: contain; margin: auto;">
+                <div class="col-sm-4 mb-4">
+                    <div class="card h-100">
+                        <img src="../static/img/productos/{{producto.image_name}}" class="card-img-top" alt="..." style="height: 250px; object-fit: contain;">
                         <div class="card-body">
                             <h5 class="card-title">{{producto.nombre}}</h5>
                             <p class="card-text">${{producto.precio}}</p>
@@ -257,6 +202,8 @@
             </div>
         </div>
     </section>
-
+    
+    
+    
 </main><!-- End #main -->
 {% endblock %}

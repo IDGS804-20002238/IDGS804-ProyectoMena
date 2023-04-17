@@ -15,20 +15,31 @@ from sqlalchemy import text, func
 
 pedidos = Blueprint('pedidos', __name__, url_prefix='/pedidos')
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+file_handler = logging.FileHandler('app.log')
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
+
 @pedidos.route('/verPedidos')
 @login_required
 def verPedidos():
     if (current_user.idrole == 1 or current_user.idrole == 2):
         detalles = v_compras_estatus.query.all()
+        logger.info('ver pedidos visitada por el usuario: %s', current_user.name)
         return render_template('/pedidos/verPedidos.html', detalles=detalles)
     if (current_user.idrole == 3):
         detalles = v_compras_estatus.query.filter(v_compras_estatus.descripcionEstatus == 'PEDIDO ENVIADO').all()
+        logger.info('ver pedidos visitada por el usuario: %s', current_user.name)
         return render_template('/pedidos/verPedidos.html', detalles=detalles)
     if current_user.idrole == 4:
         detalles = v_compras_estatus.query.filter_by(id=current_user.id).all()
+        logger.info('ver pedidos visitada por el usuario: %s', current_user.name)
         return render_template('/pedidos/verPedidos.html', detalles=detalles)
     else:
         flash('No tiene permisos para acceder a esta vista.')
+        logger.info('error de permisos, no puede ingresar debido a su rol, nombre del usuario que intentó ingresar: %s', current_user.name)
         return redirect(url_for('main.profile'))
     
 @pedidos.route('/crear_pedido', methods=['GET', 'POST'])
@@ -64,9 +75,11 @@ def crear_pedido():
                     db.session.add(detalle)
                 db.session.commit()
                 return jsonify({'Estatus': 'ok', 'mensaje': 'Pedido agregado con éxito'})
+            logger.info('pedido creado por el usuario: %s', current_user.name)
         return jsonify({'Estatus': 'no', 'mensaje': 'Error al crear el pedido'})
     else:
         flash('No tiene permisos para acceder a esta vista.')
+        logger.info('error de permisos, no puede ingresar debido a su rol, nombre del usuario que intentó ingresar: %s', current_user.name)
         return redirect(url_for('main.profile'))
 
 @pedidos.route('/cancelar_pedido', methods=['GET', 'POST'])
@@ -80,9 +93,11 @@ def cancelar_pedido():
             else:
                 db.session.execute(text('UPDATE compras SET estatus = :estatus WHERE idCompra = :id'), {'estatus': '5', 'id': idCompra})
                 db.session.commit()
+                logger.info('cancelar pedido por el usuario: %s', current_user.name)
                 return jsonify({'status': 'success', 'message': 'El pedido ha sido cancelado.'})
     else:
         flash('No tiene permisos para acceder a esta vista.')
+        logger.info('error de permisos, no puede ingresar debido a su rol, nombre del usuario que intentó ingresar: %s', current_user.name)
         return redirect(url_for('main.profile'))
 
 
@@ -92,9 +107,11 @@ def cancelar_pedido():
 def ver_detalle(idPedido):
     if (current_user.idrole == 1 or current_user.idrole == 2 or current_user.idrole == 4):
         detalle = Pedidos.query.filter(Pedidos.CompraId == idPedido).all()
+        logger.info('ver detalle visitada por el usuario: %s', current_user.name)
         return render_template('/pedidos/detallePedido.html', pedido=detalle)
     else:
         flash('No tiene permisos para acceder a esta vista.')
+        logger.info('error de permisos, no puede ingresar debido a su rol, nombre del usuario que intentó ingresar: %s', current_user.name)
         return redirect(url_for('main.profile'))
 
 
@@ -126,6 +143,7 @@ def actualizar_compra():
                 db.session.commit()
             else:
                 # Si no hay suficiente materia prima, enviar un error
+                logger.info('erorr por falta de materia prima creada por el usuario: %s', current_user.name)
                 return jsonify({'status': 'error', 'message': 'No hay suficiente tela para completar la compra'})
 
         # Descontar el hilo utilizado
@@ -135,6 +153,7 @@ def actualizar_compra():
             db.session.commit()
         else:
             # Si no hay suficiente materia prima, enviar un error
+            logger.info('erorr por falta de materia prima creada por el usuario: %s', current_user.name)
             return jsonify({'status': 'error', 'message': 'No hay suficiente hilo para completar la compra'})
 
         # Descontar el cierre utilizado
@@ -144,6 +163,7 @@ def actualizar_compra():
             db.session.commit()
         else:
             # Si no hay suficiente materia prima, enviar un error
+            logger.info('erorr por falta de materia prima creada por el usuario: %s', current_user.name)
             return jsonify({'status': 'error', 'message': 'No hay suficiente cierre para completar la compra'})
         ##-----
         # Descontar el Carros utilizados
@@ -153,6 +173,7 @@ def actualizar_compra():
             db.session.commit()
         else:
             # Si no hay suficiente materia prima, enviar un error
+            logger.info('erorr por falta de materia prima creada por el usuario: %s', current_user.name)
             return jsonify({'status': 'error', 'message': 'No hay suficientes Carros para completar la compra'})
         
         # Descontar el Argollas utilizados
@@ -162,6 +183,7 @@ def actualizar_compra():
             db.session.commit()
         else:
             # Si no hay suficiente materia prima, enviar un error
+            logger.info('erorr por falta de materia prima creada por el usuario: %s', current_user.name)
             return jsonify({'status': 'error', 'message': 'No hay suficientes Argollas para completar la compra'})
         
         # Descontar el Reflejante utilizado
@@ -171,6 +193,7 @@ def actualizar_compra():
             db.session.commit()
         else:
             # Si no hay suficiente materia prima, enviar un error
+            logger.info('erorr por falta de materia prima creada por el usuario: %s', current_user.name)
             return jsonify({'status': 'error', 'message': 'No hay suficiente Reflejante para completar la compra'})
         
         # Descontar la Bandola utilizado
@@ -180,6 +203,7 @@ def actualizar_compra():
             db.session.commit()
         else:
             # Si no hay suficiente materia prima, enviar un error
+            logger.info('erorr por falta de materia prima creada por el usuario: %s', current_user.name)
             return jsonify({'status': 'error', 'message': 'No hay suficiente Bandola para completar la compra'})
         
         # Descontar la Bandola utilizado
@@ -189,12 +213,14 @@ def actualizar_compra():
             db.session.commit()
         else:
             # Si no hay suficiente materia prima, enviar un error
+            logger.info('erorr por falta de materia prima creada por el usuario: %s', current_user.name)
             return jsonify({'status': 'error', 'message': 'No hay suficientes Hombreras para completar la compra'})
    
     # Actualizar la compra con el nuevo estatus
     compra = Compra.query.get(idCompra)
     compra.estatus = 2
     db.session.commit()
+    logger.info('actualiar compra visitada por el usuario: %s', current_user.name)
     return jsonify({'status': 'succes', 'message': 'La compra se ha actualizado correctamente'})   
 
 @pedidos.route('/enviarPedido', methods=['GET', 'POST'])
@@ -205,6 +231,7 @@ def enviarPedido():
     compra = Compra.query.get(idCompra)
     compra.estatus = 3
     db.session.commit()
+    logger.info('enviar pedido visitada por el usuario: %s', current_user.name)
     return jsonify({'status': 'succes', 'message': 'La compra se ha actualizado correctamente'})
 
 @pedidos.route('/entregarPedido', methods=['GET', 'POST'])
@@ -215,6 +242,7 @@ def entregarPedido():
     compra = Compra.query.get(idCompra)
     compra.estatus = 4
     db.session.commit()
+    logger.info('entregar pedido visitada por el usuario: %s', current_user.name)
     return jsonify({'status': 'succes', 'message': 'La compra se ha actualizado correctamente'})
 
 @pedidos.route('/obtener_domicilio', methods=['GET', 'POST'])
@@ -237,6 +265,7 @@ def obtener_domicilio():
         'referencia': user_details.referencia,
         'totalBotiquines': total_botiquines
     }
+    logger.info('obtener domicilio por el usuario: %s', current_user.name)
     return jsonify(domicilio_dict)
 
 

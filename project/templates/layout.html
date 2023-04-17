@@ -90,64 +90,47 @@
   <body>
     <header id="header" class="fixed-top d-flex align-items-center">
       <div class="container d-flex align-items-center">
-        <nav id="navbar" class="navbar">
-          <ul>
-            {% if current_user.is_authenticated and (current_user.idrole == 1  or current_user.idrole == 4) %}
-            <li><a href="{{ url_for('productos.galeria') }}">Productos</a></li>
-            {% endif %} {% if current_user.is_authenticated and
-            (current_user.idrole == 1 or current_user.idrole == 2)%}
-            <li>
-              <a href="{{ url_for('productos.listaProductos') }}"
-                >Lista de Productos</a
-              >
-            </li>
-            {% endif %} {% if current_user.is_authenticated and
-            (current_user.idrole == 1 or current_user.idrole == 2)%}
-            <li>
-              <a href="{{ url_for('materiaPrima.galeriaMateriaPrima') }}"
-                >Materia Prima</a
-              >
-            </li>
-            {% endif %}
-            {% if current_user.is_authenticated and
-              (current_user.idrole == 1)%}
-              <li>
-                <a href="{{ url_for('materiaPrima.proovedores') }}">Proveedores</a>
-              </li>
+        <nav id="navbar" class="navbar navbar-expand-lg">
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav">
+              {% if current_user.is_authenticated and (current_user.idrole == 1 or current_user.idrole == 4) %}
+              <li class="nav-item"><a class="nav-link" href="{{ url_for('productos.galeria') }}">Productos</a></li>
               {% endif %}
-            {% if not current_user.is_authenticated %}
-            <li><a href="{{ url_for('auth.login') }}">Acceder</a></li>
-            <li><a href="{{ url_for('auth.register') }}">Registro</a></li>
-            {% endif %} 
-            {% if current_user.is_authenticated and
-            (current_user.idrole == 1 or current_user.idrole == 2 or
-            current_user.idrole == 4 or current_user.idrole == 3) %}
-            <li>
-              <a href="{{ url_for('pedidos.verPedidos') }}">Mis Pedidos</a>
-            </li>
-            {% endif %}
-            {% if current_user.is_authenticated and
-              (current_user.idrole == 1)%}
-              <li>
-                <a href="{{ url_for('altaUsuarios.createUsers') }}">Alta de usuarios</a>
-              </li>
-              {% endif %} 
-              {% if current_user.is_authenticated and
-                (current_user.idrole == 1)%}
-                <li>
-                  <a href="{{ url_for('finanzas.getFinanzas') }}">Finanzas</a>
-                </li>
-                {% endif %} 
-              
-            {% if current_user.is_authenticated %}
-            <li><a href="{{ url_for('main.contacto') }}">Contacto</a></li>
-            <li><a href="{{ url_for('auth.logout') }}">Salir</a></li>
-            {% endif %}
-          </ul>
-          <i class="bi bi-list mobile-nav-toggle"></i>
+              {% if current_user.is_authenticated and (current_user.idrole == 1 or current_user.idrole == 2) %}
+              <li class="nav-item"><a class="nav-link" href="{{ url_for('productos.listaProductos') }}">Lista de Productos</a></li>
+              {% endif %}
+              {% if current_user.is_authenticated and (current_user.idrole == 1 or current_user.idrole == 2) %}
+              <li class="nav-item"><a class="nav-link" href="{{ url_for('materiaPrima.galeriaMateriaPrima') }}">Materia Prima</a></li>
+              {% endif %}
+              {% if current_user.is_authenticated and (current_user.idrole == 1) %}
+              <li class="nav-item"><a class="nav-link" href="{{ url_for('materiaPrima.proovedores') }}">Proveedores</a></li>
+              {% endif %}
+              {% if not current_user.is_authenticated %}
+              <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.login') }}">Acceder</a></li>
+              <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.register') }}">Registro</a></li>
+              {% endif %}
+              {% if current_user.is_authenticated and (current_user.idrole == 1 or current_user.idrole == 2 or current_user.idrole == 4 or current_user.idrole == 3) %}
+              <li class="nav-item"><a class="nav-link" href="{{ url_for('pedidos.verPedidos') }}">Mis Pedidos</a></li>
+              {% endif %}
+              {% if current_user.is_authenticated and (current_user.idrole == 1) %}
+              <li class="nav-item"><a class="nav-link" href="{{ url_for('altaUsuarios.createUsers') }}">Alta de usuarios</a></li>
+              {% endif %}
+              {% if current_user.is_authenticated and (current_user.idrole == 1) %}
+              <li class="nav-item"><a class="nav-link" href="{{ url_for('finanzas.getFinanzas') }}">Finanzas</a></li>
+              {% endif %}
+              {% if current_user.is_authenticated %}
+              <li class="nav-item"><a class="nav-link" href="{{ url_for('main.contacto') }}">Contacto</a></li>
+              <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.logout') }}">Salir</a></li>
+              {% endif %}
+            </ul>
+          </div>
         </nav>
       </div>
     </header>
+    
     {% block content %} {% endblock %}
     <footer id="footer">
       <div class="footer-top">
