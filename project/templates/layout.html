@@ -496,14 +496,17 @@
         // Función que se llama cuando se hace clic en el botón "Agregar al carrito"
         $(".agregar-carrito").click(function () {
           var idProducto = $(this).val(); // Obtenemos el ID del producto que se está agregando
+          console.log(idProducto);
           var nombre = $(this)
-            .closest(".product-card")
+            .closest(".card")
             .find(".card-title")
             .text(); // Obtenemos el nombre del producto
+            console.log(nombre);
           var precio = $(this)
-            .closest(".product-card")
+            .closest(".card")
             .find(".card-text")
             .text(); // Obtenemos el precio del producto
+            console.log(precio);
           precio = parseFloat(precio.replace("$", "")); // Convertimos el precio a un número
 
           // Si el producto ya está en el carrito, incrementamos la cantidad en 1. Si no, lo agregamos al carrito.

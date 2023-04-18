@@ -215,38 +215,84 @@ WHERE MONTH(cm.confirmed_at) = MONTH(CONVERT(date, GETDATE())) AND YEAR(cm.confi
 
 CREATE VIEW v_finanzas AS
 SELECT
-  SUM(cmp.pagoTotal) AS gastos,
-  SUM(c.subtotal) AS ingresos,
-  SUM(c.subtotal - cmp.pagoTotal) AS ganancias
+SUM(cmp.pagoTotal) AS gastos,
+SUM(c.subtotal) AS ingresos,
+SUM(c.subtotal - cmp.pagoTotal) AS ganancias,
+CASE DATENAME(MONTH, GETDATE())
+WHEN 'January' THEN 'Enero'
+WHEN 'February' THEN 'Febrero'
+WHEN 'March' THEN 'Marzo'
+WHEN 'April' THEN 'Abril'
+WHEN 'May' THEN 'Mayo'
+WHEN 'June' THEN 'Junio'
+WHEN 'July' THEN 'Julio'
+WHEN 'August' THEN 'Agosto'
+WHEN 'September' THEN 'Septiembre'
+WHEN 'October' THEN 'Octubre'
+WHEN 'November' THEN 'Noviembre'
+WHEN 'December' THEN 'Diciembre'
+END AS mes_actual
 FROM
-  compraMateriaPrima cmp
-  JOIN compras c ON c.idCompra = cmp.compraMateriaPrimaID
+compraMateriaPrima cmp
+JOIN compras c ON c.idCompra = cmp.compraMateriaPrimaID
 WHERE MONTH(c.fechaCompra) = MONTH(CONVERT(date, GETDATE())) AND YEAR(c.fechaCompra) = YEAR(CONVERT(date, GETDATE()));
-
 ----------------------------------------------------------Eventos---------------------------------------------------------
-DROP EVENT IF EXISTS actualizar_finanzas_mes;
+USE msdb;
+GO
 
-CREATE EVENT `actualizar_finanzas_mes` 
-ON SCHEDULE
-  EVERY 1 MONTH STARTS DATE_FORMAT(DATE_ADD(NOW(), INTERVAL 1 MONTH), '%Y-%m-01 00:00:00')
-DO BEGIN
-  INSERT INTO finanzas_mes (mes, anio, ingresos, gastos, ganancias)
-  SELECT MONTH(NOW()), YEAR(NOW()), SUM(vi.subtotal), SUM(vg.pagoTotal), SUM(vi.subtotal - vg.pagoTotal)
-  FROM v_ingresos vi
-  JOIN v_gastos vg ON vi.idCompra = vg.compraMateriaPrimaID;
-END;
+DECLARE @jobId binary(16);
 
-DROP EVENT IF EXISTS actualizar_ventas_mes;
+IF EXISTS(SELECT job_id FROM msdb.dbo.sysjobs WHERE name = 'Insertar datos de finanzas')
+BEGIN
+    EXEC msdb.dbo.sp_delete_job @job_name = N'Insertar datos de finanzas';
+END
 
-CREATE EVENT `actualizar_ventas_mes` 
-ON SCHEDULE
-  EVERY 1 MONTH STARTS DATE_FORMAT(DATE_ADD(NOW(), INTERVAL 1 MONTH), '%Y-%m-01 00:00:00')
-DO BEGIN
-  INSERT INTO ventas_mes (mes, anio, cantidad_ventas, total_ventas)
-  SELECT MONTH(NOW()), YEAR(NOW()), COUNT(*) AS cantidad_ventas, SUM(total) AS total_ventas
-  FROM ventas
-  WHERE MONTH(fechaVenta) = MONTH(NOW()) AND YEAR(fechaVenta) = YEAR(NOW());
-END;
+EXEC msdb.dbo.sp_add_job
+    @job_name = N'Insertar datos de finanzas',
+    @enabled = 1,
+    @description = N'Tarea para insertar datos de finanzas en la tabla finanzas_mes',
+    @job_id = @jobId OUTPUT;
+
+EXEC msdb.dbo.sp_add_jobstep
+    @job_id = @jobId,
+    @step_name = N'Insertar datos de finanzas',
+    @subsystem = N'TSQL',
+    @command = N'INSERT INTO finanzas_mes (mes, anio, ingresos, gastos, ganancias)
+                SELECT MONTH(GETDATE()), YEAR(GETDATE()), ingresos, gastos, ganancias
+                FROM v_finanzas
+                WHERE mes_actual = DATENAME(MONTH, GETDATE())',
+    @retry_attempts = 0,
+    @retry_interval = 0;
+
+DECLARE @scheduleId int;
+EXEC msdb.dbo.sp_add_schedule
+    @schedule_name = N'Mensualmente',
+    @freq_type = 8,
+    @freq_interval = 1,
+    @freq_subday_type = 1,
+    @freq_subday_interval = 0,
+    @freq_relative_interval = 0,
+    @freq_recurrence_factor = 1,
+    @active_start_date = 20220401,
+    @active_end_date = 99991231,
+    @schedule_id = @scheduleId OUTPUT;
+
+EXEC msdb.dbo.sp_attach_schedule
+    @job_id = @jobId,
+    @schedule_id = @scheduleId;
+
+EXEC msdb.dbo.sp_add_jobserver
+    @job_id = @jobId,
+    @server_name = N'(local)';
+
+
+
+
+INSERT INTO finanzas_mes (mes, anio, ingresos, gastos, ganancias)
+SELECT MONTH(GETDATE()), YEAR(GETDATE()), ingresos, gastos, ganancias
+FROM v_finanzas
+WHERE mes_actual = DATENAME(MONTH, GETDATE())
+
 
 
 ----------------------------------------------------------INSERTS---------------------------------------------------------
@@ -345,6 +391,7 @@ DROP TABLE detalleCompra;
 DROP TABLE cat_Estatus;
 DROP TABLE proovedores;
 DROP TABLE compraMateriaPrima;
+DROP TABLE finanzas_mes;
 
 
 DROP VIEW v_tipo_producto;
@@ -373,6 +420,7 @@ select * from detalleCompra;
 select * from cat_Estatus;
 select * from proovedores;
 select * from compraMateriaPrima;
+select * from finanzas_mes;
 
 
 
